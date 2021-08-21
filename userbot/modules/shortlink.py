@@ -20,13 +20,13 @@ async def _(event):
 
     if msg_link:
         d_link = msg_link.text
-        await event.edit("`Shortning replied link...`")
+        await event.edit("`Shortening replied link...`")
     elif "https" not in d_link:
         await event.edit(
             "**Masukkan link, pastikan dimulai dengan** `http://` **atau** `https://`"
         )
     else:
-        await event.edit("`Shortning link...`")
+        await event.edit("`Shortening link...`")
     chat = "@ShortUrlBot"
     try:
         async with event.client.conversation(chat) as conv:
@@ -37,11 +37,11 @@ async def _(event):
                 response = await conv.get_response()
                 url = await conv.get_response()
                 sponser = await conv.get_response()
-                """- don't spam notif -"""
+                """- jangan spam notif -"""
                 await bot.send_read_acknowledge(conv.chat_id)
                 await event.edit(response.text)
             except YouBlockedUserError:
-                await event.edit("`Unblock `@ShortUrlBot` and retry`")
+                await event.edit("**Unblock @ShortUrlBot dan coba lagi**")
                 return
             await event.client.send_message(event.chat_id, url)
             await event.client.delete_messages(
@@ -51,7 +51,7 @@ async def _(event):
             await event.delete()
     except TimeoutError:
         return await event.edit(
-            "`Error: `@ShortUrlBot` is not responding please try again later"
+            "**ERROR: @ShortUrlBot tidak merespon silahkan coba lagi nanti**"
         )
 
 
