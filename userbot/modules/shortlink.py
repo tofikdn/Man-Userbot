@@ -3,11 +3,10 @@
 # FROM <https://github.com/mrismanaziz/Man-Userbot>
 # t.me/SharingUserbot & t.me/Lunatic0de
 
-import asyncio
-from asyncio import sleep
 from asyncio.exceptions import TimeoutError
-from telethon import events
+
 from telethon.errors.rpcerrorlist import YouBlockedUserError
+
 from userbot import CMD_HELP, bot
 from userbot.events import register
 
@@ -23,7 +22,9 @@ async def _(event):
         d_link = msg_link.text
         await event.edit("`Shortning replied link...`")
     elif "https" not in d_link:
-        await event.edit("**Masukkan link, pastikan dimulai dengan** `http://` **atau** `https://`")
+        await event.edit(
+            "**Masukkan link, pastikan dimulai dengan** `http://` **atau** `https://`"
+        )
     else:
         await event.edit("`Shortning link...`")
     chat = "@ShortUrlBot"
@@ -42,13 +43,16 @@ async def _(event):
             except YouBlockedUserError:
                 await event.edit("`Unblock `@ShortUrlBot` and retry`")
                 return
-            await event.client.send_message(event.chat_id,  url)
+            await event.client.send_message(event.chat_id, url)
             await event.client.delete_messages(
-                conv.chat_id, [msg_start.id, response.id, msg.id, bot_reply.id, sponser.id, url.id]
+                conv.chat_id,
+                [msg_start.id, response.id, msg.id, bot_reply.id, sponser.id, url.id],
             )
             await event.delete()
     except TimeoutError:
-        return await event.edit("`Error: `@ShortUrlBot` is not responding please try again later")
+        return await event.edit(
+            "`Error: `@ShortUrlBot` is not responding please try again later"
+        )
 
 
 CMD_HELP.update(
