@@ -3,12 +3,13 @@
 # FROM <https://github.com/mrismanaziz/Man-Userbot>
 # t.me/SharingUserbot & t.me/Lunatic0de
 
-import asyncio
 from asyncio.exceptions import TimeoutError
-from telethon import events
+
 from telethon.errors.rpcerrorlist import YouBlockedUserError
+
 from userbot import CMD_HELP, bot
 from userbot.events import register
+
 
 @register(outgoing=True, pattern=r"^\.pdf(?: |$)(.*)")
 async def _(event):
@@ -37,12 +38,26 @@ async def _(event):
                 return
             await event.client.send_message(event.chat_id, pdf)
             await event.client.delete_messages(
-                conv.chat_id, [msg_start.id, response.id, msg.id, started.id, filename.id, editfilename.id, enterfilename.id, cnfrm.id, pdf.id, convert.id]
+                conv.chat_id,
+                [
+                    msg_start.id,
+                    response.id,
+                    msg.id,
+                    started.id,
+                    filename.id,
+                    editfilename.id,
+                    enterfilename.id,
+                    cnfrm.id,
+                    pdf.id,
+                    convert.id,
+                ],
             )
             await event.delete()
     except TimeoutError:
         return await event.edit(
-                "**ERROR: Maaf @office2pdf_bot tidak merespon, coba lagi nanti**")
+            "**ERROR: Maaf @office2pdf_bot tidak merespon, coba lagi nanti**"
+        )
+
 
 CMD_HELP.update(
     {
