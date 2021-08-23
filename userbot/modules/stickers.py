@@ -279,7 +279,7 @@ async def resize_photo(photo):
     return image
 
 
-@register(outgoing=True, pattern=r"^\.kangpack($| )?([0-9]*)?$")
+@register(outgoing=True, pattern=r"^\.packkang($| )?([0-9]*)?$")
 async def kangpack(event):
     await event.edit("`Kanging the whole pack...`")
     user = await bot.get_me()
