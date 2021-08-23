@@ -338,9 +338,9 @@ async def kangpack(event):
         UpdateNotifySettingsRequest(
             peer="t.me/Stickers",
             settings=InputPeerNotifySettings(mute_until=2 ** 31 - 1),
-        )  
+        )
     )
-    if not muted:  
+    if not muted:
         await event.edit(
             "**Tidak dapat membisukan bot Stiker, waspadalah terhadap spam notifikasi.**"
         )
