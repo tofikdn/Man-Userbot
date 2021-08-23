@@ -13,10 +13,12 @@ from os import remove
 import requests
 from bs4 import BeautifulSoup as bs
 from PIL import Image
+from telethon.tl.functions.account import UpdateNotifySettingsRequest
 from telethon.tl.functions.messages import GetStickerSetRequest
 from telethon.tl.types import (
     DocumentAttributeFilename,
     DocumentAttributeSticker,
+    InputPeerNotifySettings,
     InputStickerSetID,
     MessageMediaPhoto,
 )
@@ -275,6 +277,140 @@ async def resize_photo(photo):
         image.thumbnail(maxsize)
 
     return image
+
+
+@register(outgoing=True, pattern=r"^\.kangpack($| )?([0-9]*)?$")
+async def kangpack(event):
+    await event.edit("`Kanging the whole pack...`")
+    user = await bot.get_me()
+    pack_username = ""
+    if not user.username:
+        try:
+            user.first_name.decode("ascii")
+            pack_username = user.first_name
+        except UnicodeDecodeError:  # User's first name isn't ASCII, use ID instead
+            pack_username = user.id
+    else:
+        pack_username = user.username
+
+    textx = await event.get_reply_message()
+
+    if not textx.sticker:
+        await event.edit(
+            "**Kamu perlu membalas stiker untuk mencuri seluruh paket sticker!**"
+        )
+        return
+
+    sticker_set = textx.file.sticker_set
+    stickers = await event.client(
+        GetStickerSetRequest(
+            stickerset=InputStickerSetID(
+                id=sticker_set.id, access_hash=sticker_set.access_hash
+            )
+        )
+    )
+    is_anim = textx.file.mime_type == "application/x-tgsticker"
+
+    number = event.pattern_match.group(2) or 1
+    new_pack = False
+    while not new_pack:
+        packname = f"a{user.id}_by_{pack_username}_{number}{'_anim' if is_anim else ''}"
+        packtitle = (
+            f"Sticker @{user.username or user.first_name} Vol. "
+            f"{number}{' animated' if is_anim else ''}"
+        )
+        response = urllib.request.urlopen(
+            urllib.request.Request(f"http://t.me/addstickers/{packname}")
+        )
+        htmlstr = response.read().decode("utf8").split("\n")
+        new_pack = PACK_DOESNT_EXIST in htmlstr
+        if not new_pack:
+            if event.pattern_match.group(2):
+                await event.edit(
+                    "**Paket ini tidak ada! Tentukan nomor lain atau hilangkan argumen untuk membiarkan "
+                    "Mendapatkan nomor paket terendah yang tersedia secara otomatis.**"
+                )
+                return
+            number += 1
+
+    # Mute Stickers bot to ensure user doesn't get notification spam
+    muted = await bot(
+        UpdateNotifySettingsRequest(
+            peer="t.me/Stickers",
+            settings=InputPeerNotifySettings(mute_until=2 ** 31 - 1),
+        )  
+    )
+    if not muted:  
+        await event.edit(
+            "**Tidak dapat membisukan bot Stiker, waspadalah terhadap spam notifikasi.**"
+        )
+
+    async with bot.conversation("Stickers") as conv:
+        # Cancel any pending command
+        await conv.send_message("/cancel")
+        await conv.get_response()
+
+        # Send new pack command
+        if is_anim:
+            await conv.send_message("/newanimated")
+        else:
+            await conv.send_message("/newpack")
+        await conv.get_response()
+
+        # Give the pack a name
+        await conv.send_message(packtitle)
+        await conv.get_response()
+
+    for sticker in stickers.documents:
+        async with bot.conversation("Stickers") as conv2:
+            emoji = sticker.attributes[1].alt
+            # Upload sticker file
+            if is_anim:
+                sticker_dl = io.BytesIO()
+                await bot.download_media(sticker, sticker_dl)
+                sticker_dl.seek(0)
+                upload = await bot.upload_file(
+                    sticker_dl, file_name="AnimatedSticker.tgs"
+                )
+                await conv2.send_file(upload, force_document=True)
+            else:
+                await conv2.send_file(sticker, force_document=True)
+            await conv2.get_response()
+
+            # Send the emoji
+            await conv2.send_message(emoji)
+            await conv2.get_response()
+
+    async with bot.conversation("Stickers") as conv:
+        # Publish the pack
+        await conv.send_message("/publish")
+        if is_anim:
+            await conv.get_response()
+            await conv.send_message(f"<{packtitle}>")
+        await conv.get_response()
+
+        # Skip pack icon selection
+        await conv.send_message("/skip")
+        await conv.get_response()
+
+        # Send packname
+        await conv.send_message(packname)
+        await conv.get_response()
+
+    # Read all unread messages
+    await bot.send_read_acknowledge("t.me/Stickers")
+    # Unmute Stickers bot back
+    muted = await bot(
+        UpdateNotifySettingsRequest(
+            peer="t.me/Stickers", settings=InputPeerNotifySettings(mute_until=None)
+        )
+    )
+
+    await event.edit(
+        f"`Sticker pack {number}{' (animated)' if is_anim else ''} has been created!\n"
+        f"It can be found` [here](t.me/addstickers/{packname})`.`",
+        parse_mode="md",
+    )
 
 
 @register(outgoing=True, pattern=r"^\.stkrinfo$")
