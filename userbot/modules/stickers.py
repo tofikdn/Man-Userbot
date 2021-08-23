@@ -35,6 +35,7 @@ KANGING_STR = [
     "Ini Sticker aku colong yaa DUARR!",
     "leh ugha ni Sticker Colong ahh~",
 ]
+PACK_DOESNT_EXIST = "Pengguna telah membuat Stiker set."
 
 
 @register(outgoing=True, pattern=r"^\.(?:tikel|kang)\s?(.)?")
