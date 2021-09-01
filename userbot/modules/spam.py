@@ -41,7 +41,9 @@ async def spammer(spamm):
     try:
         counter = int(spamm.pattern_match.group(1).split(" ", 1)[0])
     except IndexError:
-        await spamm.edit("**Gunakan Perintah** `.spam <jumlah spam> <text>` **atau** `.spam <jumlah spam>` **sambil reply pesan**")
+        await spamm.edit(
+            "**Gunakan Perintah** `.spam <jumlah spam> <text>` **atau** `.spam <jumlah spam>` **sambil reply pesan**"
+        )
         await sleep(5)
         await spamm.delete()
         return
@@ -50,7 +52,9 @@ async def spammer(spamm):
         try:
             spam_message = str(spamm.pattern_match.group(1).split(" ", 1)[1])
         except IndexError:
-            await spamm.edit("**Gunakan Perintah** `.spam <jumlah spam> <text>` **atau** `.spam <jumlah spam>` **sambil reply pesan**")
+            await spamm.edit(
+                "**Gunakan Perintah** `.spam <jumlah spam> <text>` **atau** `.spam <jumlah spam>` **sambil reply pesan**"
+            )
             await sleep(5)
             await spamm.delete()
             return
@@ -60,7 +64,7 @@ async def spammer(spamm):
             await spamm.client.send_message(
                 BOTLOG_CHATID, "**#SPAM** was executed successfully"
             )
-    elif (textx and textx.text):
+    elif textx and textx.text:
         await spamm.delete()
         await asyncio.wait([spamm.respond(textx) for i in range(counter)])
         if BOTLOG:
@@ -77,7 +81,9 @@ async def tiny_pic_spam(pspam):
         counter = int(text[1])
         link = str(text[2])
     except IndexError:
-        await pspam.edit("**Gunakan Perintah** `.picspam` <jumlah spam> <link image/gif>")
+        await pspam.edit(
+            "**Gunakan Perintah** `.picspam` <jumlah spam> <link image/gif>"
+        )
         await sleep(5)
         await pspam.delete()
         return
@@ -97,7 +103,9 @@ async def dspammer(dspam):
         counter = int(dspam.pattern_match.group(1).split(" ", 2)[1])
         spam_message = str(dspam.pattern_match.group(1).split(" ", 2)[2])
     except IndexError:
-        await dspam.edit("**Gunakan Perintah** `.delayspam` <detik> <jumlah spam> <text>")
+        await dspam.edit(
+            "**Gunakan Perintah** `.delayspam` <detik> <jumlah spam> <text>"
+        )
         await sleep(5)
         await dspam.delete()
         return
