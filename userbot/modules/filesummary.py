@@ -62,7 +62,7 @@ async def _(event):  # sourcery no-metrics
         link = f"<a href='tg://user?id={chatdata.id}'>{chatdata.first_name}</a>"
     event = await edit_or_reply(
         event,
-        f"<b>Menghitung file dan ukuran file dari group </b><code>{link}</code>\n<b>Ini mungkin memakan waktu juga tergantung pada jumlah pesan grup</b>",
+        f"<b>Menghitung ukuran File dari group </b><code>{link}</code>",
         parse_mode="HTML",
     )
     media_dict = {
@@ -107,11 +107,11 @@ async def _(event):  # sourcery no-metrics
         str(round((weird_division((endtime - starttime), totalcount)) * 1000, 2))
         + " ms"
     )
-    totalstring = f"<b>Total Files :</b><code> {totalcount}</code>\n<b>Total File Size :</b><code> {humanbytes(totalsize)}</code>\n<b>Avg. File Size :</b><code> {avghubytes}\n</code>"
+    totalstring = f"<b>Total Files :</b> <code>{totalcount}</code>\n<b>Total File Size :</b> <code>{humanbytes(totalsize)}</code>\n<b>Avg. File Size :</b> <code>{avghubytes}</code>\n"
 
-    runtimestring = f"Runtime : <code> {runtime}</code>\
-                        \nRuntime per file : <code> {avgruntime}</code>"
-    line = "<code>━━━━━━━━━━━━━━━━━━━━</code>\n"
+    runtimestring = f"Runtime : <code>{runtime}</code>\
+                        \nRuntime per file : <code>{avgruntime}</code>"
+    line = "<b>━━━━━━━━━━━━━━━━━━━━</b>\n"
     result = f"<b>Group : {link}</b>\n\n"
     result += f"<b>Total Messages:</b><code> {msg_count}</code>\n"
     result += "<b>File Summary : </b>\n"
@@ -176,7 +176,7 @@ async def _(event):  # sourcery no-metrics
         link = f"<a href='tg://user?id={chatdata.id}'>{chatdata.first_name}</a>"
     event = await edit_or_reply(
         event,
-        f"<b>Menghitung file dan ukuran file dari </b>{_format.htmlmentionuser(userdata.first_name,userdata.id)}<b> di Grup </b><code>{link}</code>\n<b>Ini mungkin memakan waktu juga tergantung pada jumlah pesan pengguna</b>",
+        f"<b>Menghitung ukuran File yang dikirim </b>{_format.htmlmentionuser(userdata.first_name,userdata.id)}<b> di Grup </b><code>{link}</code>\n",
         parse_mode="HTML",
     )
 
@@ -224,14 +224,14 @@ async def _(event):  # sourcery no-metrics
         str(round((weird_division((endtime - starttime), totalcount)) * 1000, 2))
         + " ms"
     )
-    totalstring = f"<b>Total Files :</b><code> {totalcount}\n<b>Total File Size :</b><code> {humanbytes(totalsize)}</code>\n<b>Avg. File Size :</b><code> {avghubytes}\\\x1f \n</code>"
+    totalstring = f"<b>Total Files :</b> <code>{totalcount}</code>\n<b>Total File Size :</b> <code>{humanbytes(totalsize)}</code>\n<b>Avg. File Size :</b> <code>{avghubytes}\\\x1f \n</code>"
 
-    runtimestring = f"<b>Runtime :</b><code> {runtime}</code>\
-                    \n<b>Runtime Per File :</b><code> {avgruntime}</code>\
+    runtimestring = f"<b>Runtime :</b> <code>{runtime}</code>\
+                    \n<b>Runtime Per File :</b> <code>{avgruntime}</code>\
                     \n"
-    line = "<code>━━━━━━━━━━━━━━━━━━━━</code>\n"
-    result = f"<b>Group : {link}\nUser : {_format.htmlmentionuser(userdata.first_name,userdata.id)}\n\n"
-    result += f"<b>Total Messages:</b><code> {msg_count}</code>\n"
+    line = "<b>━━━━━━━━━━━━━━━━━━━━</b>\n"
+    result = f"<b>Group : {link}\nUser : {_format.htmlmentionuser(userdata.first_name,userdata.id)}</b>\n\n"
+    result += f"<b>Total Messages:</b> <code>{msg_count}</code>\n"
     result += "<b>File Summary : </b>\n"
     result += f"<code>{x}</code>\n"
     result += f"{largest}"
@@ -246,6 +246,7 @@ CMD_HELP.update(
         \n  •  **Function : **Untuk Menampilkan ringkasan media/file lengkap dari grup itu\
         \n\n  •  **Syntax :** `.userfs` <reply/username/id>\
         \n  •  **Function : **Untuk Menampilkan ringkasan media/file lengkap dari anggota group tersebut.\
+        \n\n  •  **NOTE :** Untuk sekarang terbatas pada 10.000 terakhir di grup yang Anda gunakan\
     "
     }
 )
