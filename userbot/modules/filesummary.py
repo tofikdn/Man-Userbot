@@ -4,12 +4,12 @@
 # t.me/SharingUserbot & t.me/Lunatic0de
 
 import time
-from prettytable import PrettyTable
-from userbot import CMD_HELP, LOGS
-from userbot.events import register
-from userbot.utils import humanbytes, time_formatter, media_type, edit_delete, edit_or_reply
-from userbot.utils import _format
 
+from prettytable import PrettyTable
+
+from userbot import CMD_HELP
+from userbot.events import register
+from userbot.utils import _format, edit_delete, edit_or_reply, humanbytes, media_type
 
 TYPES = [
     "Photo",
@@ -22,8 +22,10 @@ TYPES = [
     "Round Video",
 ]
 
+
 def weird_division(n, d):
     return n / d if d else 0
+
 
 @register(outgoing=True, pattern=r"^\.chatfs(?: |$)(.*)")
 async def _(event):  # sourcery no-metrics
@@ -117,7 +119,6 @@ async def _(event):  # sourcery no-metrics
     result += f"{largest}"
     result += line + totalstring + line + runtimestring + line
     await event.edit(result, parse_mode="HTML", link_preview=False)
-
 
 
 @register(outgoing=True, pattern=r"^\.userfs(?: |$)(.*)")
