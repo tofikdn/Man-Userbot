@@ -109,8 +109,9 @@ async def _(event):  # sourcery no-metrics
     )
     totalstring = f"<b>Total Files :</b> <code>{totalcount}</code>\n<b>Total File Size :</b> <code>{humanbytes(totalsize)}</code>\n<b>Avg. File Size :</b> <code>{avghubytes}</code>\n"
 
-    runtimestring = f"Runtime : <code>{runtime}</code>\
-                        \nRuntime per file : <code>{avgruntime}</code>"
+    runtimestring = f"<b>Runtime :</b> <code>{runtime}</code>\
+                        \n<b>Runtime per file :</b> <code>{avgruntime}</code>\
+                        \n"
     line = "<b>━━━━━━━━━━━━━━━━━━━━</b>\n"
     result = f"<b>Group : {link}</b>\n\n"
     result += f"<b>Total Messages:</b><code> {msg_count}</code>\n"
@@ -241,7 +242,7 @@ async def _(event):  # sourcery no-metrics
 
 CMD_HELP.update(
     {
-        "file-summary": "**Plugin : **`file-summery`\
+        "filesummary": "**Plugin : **`file-summery`\
         \n\n  •  **Syntax :** `.chatfs` <username/id>\
         \n  •  **Function : **Untuk Menampilkan ringkasan media/file lengkap dari grup itu\
         \n\n  •  **Syntax :** `.userfs` <reply/username/id>\
