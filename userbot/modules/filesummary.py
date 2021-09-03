@@ -111,7 +111,7 @@ async def _(event):  # sourcery no-metrics
 
     runtimestring = f"Runtime : <code> {runtime}</code>\
                         \nRuntime per file : <code> {avgruntime}</code>"
-    line = "<code>----------------------------------</code>\n"
+    line = "<code>━━━━━━━━━━━━━━━━━━━━</code>\n"
     result = f"<b>Group : {link}</b>\n\n"
     result += f"<b>Total Messages:</b><code> {msg_count}</code>\n"
     result += "<b>File Summary : </b>\n"
@@ -229,7 +229,7 @@ async def _(event):  # sourcery no-metrics
     runtimestring = f"<b>Runtime :</b><code> {runtime}</code>\
                     \n<b>Runtime Per File :</b><code> {avgruntime}</code>\
                     \n"
-    line = "<code>----------------------------------</code>\n"
+    line = "<code>━━━━━━━━━━━━━━━━━━━━</code>\n"
     result = f"<b>Group : {link}\nUser : {_format.htmlmentionuser(userdata.first_name,userdata.id)}\n\n"
     result += f"<b>Total Messages:</b><code> {msg_count}</code>\n"
     result += "<b>File Summary : </b>\n"
