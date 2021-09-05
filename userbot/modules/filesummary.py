@@ -62,7 +62,7 @@ async def _(event):  # sourcery no-metrics
         link = f"<a href='tg://user?id={chatdata.id}'>{chatdata.first_name}</a>"
     event = await edit_or_reply(
         event,
-        f"<b>Menghitung ukuran File dari group </b><code>{link}</code>",
+        f"<b>Menghitung ukuran File dari group </b><code>{link}</code>\n<b>Harap Tunggu Ini mungkin memakan waktu yang lama tergantung pada jumlah pesan grup</b>",
         parse_mode="HTML",
     )
     media_dict = {
@@ -177,7 +177,7 @@ async def _(event):  # sourcery no-metrics
         link = f"<a href='tg://user?id={chatdata.id}'>{chatdata.first_name}</a>"
     event = await edit_or_reply(
         event,
-        f"<b>Menghitung ukuran File yang dikirim </b>{_format.htmlmentionuser(userdata.first_name,userdata.id)}<b> di Grup </b><code>{link}</code>\n",
+        f"<b>Menghitung ukuran File yang dikirim </b>{_format.htmlmentionuser(userdata.first_name,userdata.id)}<b> di Grup </b><code>{link}</code>\n<b>Harap Tunggu Ini mungkin memakan waktu yang lama tergantung pada jumlah pesan grup</b>",
         parse_mode="HTML",
     )
 
