@@ -52,18 +52,18 @@ async def _(event):
                     if limit == 0:
                         break
             REPLY = "**GitHub Info for** `{username}`\
-                \n👤 **Name:** [{name}]({html_url})\
-                \n🔧 **Type:** `{type}`\
-                \n🏢 **Company:** `{company}`\
-                \n🔭 **Blog** : {blog}\
-                \n📍 **Location** : `{location}`\
-                \n📝 **Bio** : __{bio}__\
-                \n❤️ **Followers** : `{followers}`\
-                \n👁 **Following** : `{following}`\
-                \n📊 **Public Repos** : `{public_repos}`\
-                \n📄 **Public Gists** : `{public_gists}`\
-                \n🔗 **Profile Created** : `{created_at}`\
-                \n✏️ **Profile Updated** : `{updated_at}`".format(
+                \n👤 **Name :** [{name}]({html_url})\
+                \n🔧 **Type :** `{type}`\
+                \n🏢 **Company :** `{company}`\
+                \n🔭 **Blog :** {blog}\
+                \n📍 **Location :** `{location}`\
+                \n📝 **Bio :** __{bio}__\
+                \n❤️ **Followers :** `{followers}`\
+                \n👁 **Following :** `{following}`\
+                \n📊 **Public Repos :** `{public_repos}`\
+                \n📄 **Public Gists :** `{public_gists}`\
+                \n🔗 **Profile Created :** `{created_at}`\
+                \n✏️ **Profile Updated :** `{updated_at}`".format(
                 username=username, **result
             )
 
@@ -87,7 +87,7 @@ CMD_HELP.update(
     {
         "github": "**Plugin : **`github`\
         \n\n  •  **Syntax :** `.github` <username>\
-        \n  •  **Function : **Seperti .whois tapi untuk informasi akun GitHub.\
+        \n  •  **Function : **Menampilkan informasi tentang user di GitHub dari username yang diberikan\
     "
     }
 )
