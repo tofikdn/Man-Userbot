@@ -7,7 +7,7 @@ import asyncio
 
 from telethon.errors.rpcerrorlist import YouBlockedUserError
 
-from userbot import CMD_HELP, SUDO_USERS
+from userbot import CMD_HELP
 from userbot.events import register
 from userbot.utils import _format, edit_delete, edit_or_reply
 
@@ -20,7 +20,7 @@ async def _(event):
     if not input_str and not reply_message:
         await edit_delete(
             event,
-            "**Mohon Reply Ke Pesan Pengguna atau berikan username.**",
+            "**Mohon Reply Ke Pesan Pengguna.**", 90
         )
     user, rank = await get_user_from_event(event, secondgroup=True)
     if not user:
@@ -32,9 +32,7 @@ async def _(event):
         try:
             await conv.send_message(f"/search_id {uid}")
         except YouBlockedUserError:
-            await edit_delete(
-                manevent, "**Unblock** @sangmatainfo_bot **Dan Coba Lagi**"
-            )
+            await edit_delete(manevent, "**Unblock** @sangmatainfo_bot **Dan Coba Lagi**", 120)
         responses = []
         while True:
             try:
@@ -44,9 +42,9 @@ async def _(event):
             responses.append(response.text)
         await event.client.send_read_acknowledge(conv.chat_id)
     if not responses:
-        await edit_delete(manevent, "**Orang Ini Belum Pernah Mengganti Namanya**")
+        await edit_delete(manevent, "**Orang Ini Belum Pernah Mengganti Namanya**", 90)
     if "No records found" in responses:
-        await edit_delete(manevent, "**Orang Ini Belum Pernah Mengganti Namanya**")
+        await edit_delete(manevent, "**Orang Ini Belum Pernah Mengganti Namanya**", 90)
     names, usernames = await sangamata_seperator(responses)
     cmd = event.pattern_match.group(1)
     risman = None
@@ -57,27 +55,6 @@ async def _(event):
         else:
             risman = True
             await manevent.edit(i, parse_mode=_format.parse_pre)
-
-
-async def edit_delete(event, text, time=None, parse_mode=None, link_preview=None):
-    parse_mode = parse_mode or "md"
-    link_preview = link_preview or False
-    time = time or 60
-    if event.sender_id in SUDO_USERS:
-        reply_to = await event.get_reply_message()
-        newevent = (
-            await reply_to.reply(text, link_preview=link_preview, parse_mode=parse_mode)
-            if reply_to
-            else await event.reply(
-                text, link_preview=link_preview, parse_mode=parse_mode
-            )
-        )
-    else:
-        newevent = await event.edit(
-            text, link_preview=link_preview, parse_mode=parse_mode
-        )
-    await asyncio.sleep(time)
-    return await newevent.delete()
 
 
 async def get_user_from_event(
@@ -122,26 +99,20 @@ async def get_user_from_event(
             previous_message = await event.get_reply_message()
             if previous_message.from_id is None:
                 if not noedits:
-                    await edit_delete(
-                        manevent, "**ERROR: Dia adalah anonymous admin!**"
-                    )
+                    await edit_delete(manevent, "**ERROR: Dia adalah anonymous admin!**", 60)
                 return None, None
             user_obj = await event.client.get_entity(previous_message.sender_id)
             return user_obj, extra
         if not args:
             if not noedits:
                 await edit_delete(
-                    manevent,
-                    "**Berikan Username, user id, atau reply pesan pengguna!**",
-                    5,
+                    manevent, "**Berikan Username, user id, atau reply pesan pengguna!**", 60
                 )
             return None, None
     except Exception as e:
         LOGS.error(str(e))
     if not noedits:
-        await edit_delete(
-            manevent, "**ERROR:** __Gagal Mendapatkan history nama orang ini__"
-        )
+        await edit_delete(manevent, "**ERROR:** __Gagal Mendapatkan history nama orang ini__", 30)
     return None, None
 
 
@@ -162,9 +133,9 @@ async def sangamata_seperator(sanga_list):
 CMD_HELP.update(
     {
         "sangmata": "**Plugin : **`sangmata`\
-        \n\n  •  **Syntax :** `.sg` <sambil reply chat usernya>\
+        \n\n  •  **Syntax :** `.sg` <sambil reply chat>\
         \n  •  **Function : **Mendapatkan Riwayat Nama Pengguna selama di telegram.\
-        \n\n  •  **Syntax :** `.sgu` <sambil reply chat usernya>\
+        \n\n  •  **Syntax :** `.sgu` <sambil reply chat>\
         \n  •  **Function : **Mendapatkan Riwayat Username Pengguna selama di telegram.\
     "
     }
