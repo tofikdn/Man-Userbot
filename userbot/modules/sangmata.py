@@ -18,10 +18,7 @@ async def _(event):
     input_str = "".join(event.text.split(maxsplit=1)[1:])
     reply_message = await event.get_reply_message()
     if not input_str and not reply_message:
-        await edit_delete(
-            event,
-            "**Mohon Reply Ke Pesan Pengguna.**", 90
-        )
+        await edit_delete(event, "**Mohon Reply Ke Pesan Pengguna.**", 90)
     user, rank = await get_user_from_event(event, secondgroup=True)
     if not user:
         return
@@ -32,7 +29,9 @@ async def _(event):
         try:
             await conv.send_message(f"/search_id {uid}")
         except YouBlockedUserError:
-            await edit_delete(manevent, "**Unblock** @sangmatainfo_bot **Dan Coba Lagi**", 120)
+            await edit_delete(
+                manevent, "**Unblock** @sangmatainfo_bot **Dan Coba Lagi**", 120
+            )
         responses = []
         while True:
             try:
@@ -99,20 +98,26 @@ async def get_user_from_event(
             previous_message = await event.get_reply_message()
             if previous_message.from_id is None:
                 if not noedits:
-                    await edit_delete(manevent, "**ERROR: Dia adalah anonymous admin!**", 60)
+                    await edit_delete(
+                        manevent, "**ERROR: Dia adalah anonymous admin!**", 60
+                    )
                 return None, None
             user_obj = await event.client.get_entity(previous_message.sender_id)
             return user_obj, extra
         if not args:
             if not noedits:
                 await edit_delete(
-                    manevent, "**Berikan Username, user id, atau reply pesan pengguna!**", 60
+                    manevent,
+                    "**Berikan Username, user id, atau reply pesan pengguna!**",
+                    60,
                 )
             return None, None
     except Exception as e:
         LOGS.error(str(e))
     if not noedits:
-        await edit_delete(manevent, "**ERROR:** __Gagal Mendapatkan history nama orang ini__", 30)
+        await edit_delete(
+            manevent, "**ERROR:** __Gagal Mendapatkan history nama orang ini__", 30
+        )
     return None, None
 
 
