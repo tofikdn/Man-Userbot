@@ -1,13 +1,8 @@
 import asyncio
 from random import choice, randint
 
-from telethon.errors import BadRequestError
-from telethon.tl.functions.channels import EditAdminRequest
-from telethon.tl.types import ChatAdminRights
-
-from userbot.utils import edit_delete
 from userbot.events import register
-from userbot import ALIVE_NAME
+from userbot.utils import edit_delete
 
 
 @register(outgoing=True, pattern=r"^\.scam(?:\s|$)([\s\S]*)")
