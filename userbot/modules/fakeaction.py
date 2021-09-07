@@ -8,7 +8,6 @@
 # Ported by @mrismanaziz
 # @SharingUserbot
 
-
 import asyncio
 
 from userbot import CMD_HELP
@@ -155,7 +154,7 @@ async def _(event):
         await asyncio.sleep(t)
 
 
-@register(outgoing=True, pattern=r"^\.flokasi(?: |$)(.*)")
+@register(outgoing=True, pattern=r"^\.flocation(?: |$)(.*)")
 async def _(event):
     t = event.pattern_match.group(1)
     if not (t or t.isdigit()):
@@ -212,7 +211,7 @@ CMD_HELP.update(
         \n  •  **Function :** Menampilkan Tindakan Mengirim Photo Palsu dalam obrolan\
         \n\n  •  **Syntax :** `.fdocument` <jumlah detik>\
         \n  •  **Function :** Menampilkan Tindakan Mengirim Document/File Palsu dalam obrolan\
-        \n\n  •  **Syntax :** `.flokasi` <jumlah detik>\
+        \n\n  •  **Syntax :** `.flocation` <jumlah detik>\
         \n  •  **Function :** Menampilkan Tindakan Share Lokasi Palsu dalam obrolan\
         \n\n  •  **Syntax :** `.fcontact` <jumlah detik>\
         \n  •  **Function :** Menampilkan Tindakan Share Contact Palsu dalam obrolan\
