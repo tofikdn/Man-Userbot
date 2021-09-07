@@ -1,9 +1,9 @@
-# We're using Ubuntu 20.10
+# We're using Ubuntu
 FROM biansepang/weebproject:buster
 
 RUN git clone -b Man-Userbot https://github.com/tofikdn/Man-Userbot /root/userbot
 RUN mkdir /root/userbot/.bin
-RUN pip install --upgrade pip setuptools
+RUN pip3 install --upgrade pip setuptools
 WORKDIR /root/userbot
 
 #Install python requirements
