@@ -14,19 +14,17 @@ from userbot.utils import edit_delete, edit_or_reply
 async def detect(event):
     if DEEP_AI is None:
         return await edit_delete(
-            event, "**Tambahkan VAR** `DEEP_AI` **dan ambil Api Key di web https://deepai.org/**", 120
+            event,
+            "**Tambahkan VAR** `DEEP_AI` **dan ambil Api Key di web https://deepai.org/**",
+            120,
         )
     reply = await event.get_reply_message()
     if not reply:
-        return await edit_delete(
-            event, "**Mohon Balas ke gambar atau stiker!**", 90
-        )
+        return await edit_delete(event, "**Mohon Balas ke gambar atau stiker!**", 90)
     manevent = await edit_or_reply(event, "**MendDownload file untuk diperiksa...**")
     media = await event.client.download_media(reply)
     if not media.endswith(("png", "jpg", "webp")):
-        return await edit_delete(
-            event, "**Mohon Balas ke gambar atau stiker!**", 90
-        )
+        return await edit_delete(event, "**Mohon Balas ke gambar atau stiker!**", 90)
     manevent = await edit_or_reply(event, "`Detecting NSFW limit...`")
     r = requests.post(
         "https://api.deepai.org/api/nsfw-detector",
@@ -55,7 +53,6 @@ async def detect(event):
         link_preview=False,
         parse_mode="HTML",
     )
-
 
 
 CMD_HELP.update(
