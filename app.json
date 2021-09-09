@@ -38,6 +38,11 @@
       "value": "False",
       "required": false
     },
+    "UPSTREAM_REPO_URL": {
+      "description": "UPSTREAM Link Repo Utama",
+      "value": "https://github.com/mrismanaziz/Man-Userbot",
+      "required": true
+    },
     "ALIVE_NAME": {
       "description": "Masukan Nama untuk menunjukan pesan di perintah .alive / .afk / .ping dan lain lain",
       "required": true
