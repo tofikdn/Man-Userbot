@@ -2,6 +2,7 @@
 # ⚠️ Do not remove credits
 
 import requests
+
 from userbot import CMD_HELP
 from userbot.events import register
 
@@ -10,7 +11,7 @@ from userbot.events import register
 async def _(event):
     try:
         response = requests.get("https://api-tede.herokuapp.com/api/asupan/ptl").json()
-        await event.client.send_file(event.chat_id, response['url'])
+        await event.client.send_file(event.chat_id, response["url"])
         await event.delete()
     except Exception:
         await event.edit("**Tidak bisa menemukan video asupan.**")
@@ -20,7 +21,7 @@ async def _(event):
 async def _(event):
     try:
         response = requests.get("https://api-tede.herokuapp.com/api/asupan/wibu").json()
-        await event.client.send_file(event.chat_id, response['url'])
+        await event.client.send_file(event.chat_id, response["url"])
         await event.delete()
     except Exception:
         await event.edit("**Tidak bisa menemukan video wibu.**")
@@ -30,7 +31,7 @@ async def _(event):
 async def _(event):
     try:
         response = requests.get("https://api-tede.herokuapp.com/api/chika").json()
-        await event.client.send_file(event.chat_id, response['url'])
+        await event.client.send_file(event.chat_id, response["url"])
         await event.delete()
     except Exception:
         await event.edit("**Tidak bisa menemukan video chikakiku.**")

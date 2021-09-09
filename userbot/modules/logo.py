@@ -2,8 +2,10 @@
 # ⚠️ Do not remove credits
 
 import asyncio
+
 from telethon.errors.rpcerrorlist import YouBlockedUserError
-from userbot import CMD_HELP, ALIVE_NAME
+
+from userbot import ALIVE_NAME, CMD_HELP
 from userbot.events import register
 
 
@@ -34,11 +36,9 @@ async def _(event):
         await event.client.send_file(
             event.chat_id,
             logo,
-            caption=f"Logo by [{ALIVE_NAME}](tg://user?id={aing.id})"
+            caption=f"Logo by [{ALIVE_NAME}](tg://user?id={aing.id})",
         )
-        await event.client.delete_messages(
-            conv.chat_id, [msg.id, response.id, logo.id]
-        )
+        await event.client.delete_messages(conv.chat_id, [msg.id, response.id, logo.id])
         await event.delete()
 
 
