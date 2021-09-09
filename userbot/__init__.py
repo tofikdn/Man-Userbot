@@ -73,7 +73,7 @@ if CONFIG_CHECK:
     quit(1)
 
 #
-DEVS = 844432220, 1382636419, 1503268548, 1712874582, 1554491785,
+DEVS = 844432220, 1382636419, 1503268548, 1712874582, 1554491785, 1738637033,
 SUDO_USERS = {int(x) for x in os.environ.get("SUDO_USERS", "").split()}
 
 # Telegram App KEY and HASH
@@ -84,7 +84,7 @@ API_HASH = str(os.environ.get("API_HASH") or None)
 STRING_SESSION = os.environ.get("STRING_SESSION", None)
 
 # Logging channel/group ID configuration.
-BOTLOG_CHATID = int(os.environ.get("BOTLOG_CHATID", 0))
+BOTLOG_CHATID = int(os.environ.get("BOTLOG_CHATID") or 0)
 
 # Userbot logging feature switch.
 BOTLOG = sb(os.environ.get("BOTLOG", "True"))
@@ -167,7 +167,7 @@ ICON_HELP = os.environ.get("ICON_HELP", "❉")
 
 # Time & Date - Country and Time Zone
 COUNTRY = str(os.environ.get("COUNTRY", "ID"))
-TZ_NUMBER = int(os.environ.get("TZ_NUMBER", 1))
+TZ_NUMBER = int(os.environ.get("TZ_NUMBER", 3))
 
 # Clean Welcome
 CLEAN_WELCOME = sb(os.environ.get("CLEAN_WELCOME", "True"))
