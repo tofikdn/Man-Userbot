@@ -1,4 +1,3 @@
-# We're using Ubuntu
 FROM biansepang/weebproject:buster
 
 RUN git clone -b Man-Userbot https://github.com/tofikdn/Man-Userbot /root/userbot
