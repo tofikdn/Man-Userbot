@@ -167,7 +167,7 @@ ICON_HELP = os.environ.get("ICON_HELP", "❉")
 
 # Time & Date - Country and Time Zone
 COUNTRY = str(os.environ.get("COUNTRY", "ID"))
-TZ_NUMBER = int(os.environ.get("TZ_NUMBER", 3))
+TZ_NUMBER = int(os.environ.get("TZ_NUMBER", 1))
 
 # Clean Welcome
 CLEAN_WELCOME = sb(os.environ.get("CLEAN_WELCOME", "True"))
