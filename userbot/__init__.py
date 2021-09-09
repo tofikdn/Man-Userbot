@@ -15,6 +15,7 @@ import re
 
 from sys import version_info
 from logging import basicConfig, getLogger, INFO, DEBUG
+from distutils.util import strtobool as sb
 from math import ceil
 
 from pathlib import Path
@@ -43,7 +44,7 @@ INT_PLUG = ""
 LOAD_PLUG = {}
 
 # Bot Logs setup:
-CONSOLE_LOGGER_VERBOSE = bool(os.environ.get("CONSOLE_LOGGER_VERBOSE", False))
+CONSOLE_LOGGER_VERBOSE = sb(os.environ.get("CONSOLE_LOGGER_VERBOSE", "False"))
 
 if CONSOLE_LOGGER_VERBOSE:
     basicConfig(
@@ -86,11 +87,11 @@ STRING_SESSION = os.environ.get("STRING_SESSION", None)
 BOTLOG_CHATID = int(os.environ.get("BOTLOG_CHATID", 0))
 
 # Userbot logging feature switch.
-BOTLOG = bool(os.environ.get("BOTLOG", True))
-LOGSPAMMER = bool(os.environ.get("LOGSPAMMER", True))
+BOTLOG = sb(os.environ.get("BOTLOG", "True"))
+LOGSPAMMER = sb(os.environ.get("LOGSPAMMER", "True"))
 
 # Bleep Blop, this is a bot ;)
-PM_AUTO_BAN = bool(os.environ.get("PM_AUTO_BAN", False))
+PM_AUTO_BAN = sb(os.environ.get("PM_AUTO_BAN", "False"))
 
 # Heroku Credentials for updater.
 HEROKU_APP_NAME = os.environ.get("HEROKU_APP_NAME", None)
@@ -111,7 +112,7 @@ UPSTREAM_REPO_BRANCH = os.environ.get(
     "UPSTREAM_REPO_BRANCH", "Man-Userbot")
 
 # Console verbose logging
-CONSOLE_LOGGER_VERBOSE = bool(os.environ.get("CONSOLE_LOGGER_VERBOSE", False))
+CONSOLE_LOGGER_VERBOSE = sb(os.environ.get("CONSOLE_LOGGER_VERBOSE", "False"))
 
 # SQL Database URI
 DB_URI = os.environ.get("DATABASE_URL", None)
@@ -128,7 +129,7 @@ GOOGLE_CHROME_BIN = os.environ.get(
     "GOOGLE_CHROME_BIN") or "/usr/bin/google-chrome"
 
 # set to True if you want to log PMs to your BOTLOG_CHATID
-NC_LOG_P_M_S = bool(os.environ.get("NC_LOG_P_M_S", False))
+NC_LOG_P_M_S = bool(os.environ.get("NC_LOG_P_M_S", "False"))
 
 # OpenWeatherMap API Key
 OPEN_WEATHER_MAP_APPID = os.environ.get("OPEN_WEATHER_MAP_APPID", None)
@@ -144,8 +145,8 @@ MONGO_URI = os.environ.get("MONGO_URI", None)
 UB_BLACK_LIST_CHAT = os.environ.get("UB_BLACK_LIST_CHAT", None)
 
 # Anti Spambot Config
-ANTI_SPAMBOT = bool(os.environ.get("ANTI_SPAMBOT", False))
-ANTI_SPAMBOT_SHOUT = bool(os.environ.get("ANTI_SPAMBOT_SHOUT", False))
+ANTI_SPAMBOT = sb(os.environ.get("ANTI_SPAMBOT", "False"))
+ANTI_SPAMBOT_SHOUT = sb(os.environ.get("ANTI_SPAMBOT_SHOUT", "False"))
 
 # Youtube API key
 YOUTUBE_API_KEY = os.environ.get("YOUTUBE_API_KEY", None)
@@ -169,7 +170,7 @@ COUNTRY = str(os.environ.get("COUNTRY", "ID"))
 TZ_NUMBER = int(os.environ.get("TZ_NUMBER", 1))
 
 # Clean Welcome
-CLEAN_WELCOME = bool(os.environ.get("CLEAN_WELCOME", True))
+CLEAN_WELCOME = sb(os.environ.get("CLEAN_WELCOME", "True"))
 
 # Zipfile module
 ZIP_DOWNLOAD_DIRECTORY = os.environ.get("ZIP_DOWNLOAD_DIRECTORY", "./zips")
@@ -240,6 +241,9 @@ QUOTES_API_TOKEN = os.environ.get("QUOTES_API_TOKEN", None)
 
 # Deezloader
 DEEZER_ARL_TOKEN = os.environ.get("DEEZER_ARL_TOKEN", None)
+
+# NSFW Detect DEEP AI
+DEEP_AI = os.environ.get("DEEP_AI", None)
 
 # Photo Chat - Get this value from http://antiddos.systems
 API_TOKEN = os.environ.get("API_TOKEN", None)
