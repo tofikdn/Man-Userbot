@@ -21,6 +21,8 @@ Faker==8.1.2
 fontTools
 geopy
 git+https://github.com/ahupp/python-magic
+git+https://github.com/johnwmillr/LyricsGenius.git
+git+https://github.com/Ncode2014/search-engine-parser
 git+https://github.com/voins/google-images-download.git@2cd68173c961324a2c41c61e8b6f40a49663ce60
 gitpython
 glitch_this
