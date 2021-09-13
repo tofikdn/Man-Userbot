@@ -29,7 +29,7 @@
       "required": true
     },
     "BOTLOG_CHATID": {
-      "description": "Buatlah sebuah grup public dan masukan bot @MissRose_bot lalu ketik /id ,masukan id grup nya disini",
+      "description": "Buatlah sebuah grup dan masukan bot @MissRose_bot lalu ketik /id, masukan id grup nya disini. ex: '-123456'",
       "value": "Isi id grup mu wajib dengan awalan -100",
       "required": true
     },
