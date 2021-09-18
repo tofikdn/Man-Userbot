@@ -21,8 +21,7 @@ async def gcast(event):
     elif event.is_reply:
         msg = await event.get_reply_message()
     else:
-        await event.edit("`Berikan Sebuah Pesan Atau Reply`")
-        return
+        return await event.edit("`Berikan Sebuah Pesan Atau Reply`")
     kk = await event.edit("`Globally Broadcasting Msg...`")
     er = 0
     done = 0
