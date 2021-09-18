@@ -1,11 +1,13 @@
-FROM mrismanaziz/man-userbot:buster
+FROM biansepang/weebproject:buster
 
-RUN git clone -b Man-Userbot https://github.com/mrismanaziz/Man-Userbot /home/manuserbot/ \
-    && chmod 777 /home/manuserbot \
-    && mkdir /home/manuserbot/bin/
+RUN git clone -b memew https://github.com/tofikdn/Man-Userbot /home/man-userbot/ \
+    && chmod 777 /home/man-userbot \
+    && mkdir /home/man-userbot/bin/
 
-COPY ./sample_config.env ./config.env* /home/manuserbot/
+COPY ./sample_config.env ./config.env* /home/man-userbot/
 
-WORKDIR /home/manuserbot/
+WORKDIR /home/man-userbot/
+
+RUN pip3 install -r https://raw.githubusercontent.com/tofikdn/Man-Userbot/memew/requirements.txt
 
 CMD ["python3", "-m", "userbot"]
