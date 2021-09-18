@@ -15,13 +15,14 @@ from userbot.events import register
 
 @register(outgoing=True, pattern=r"^\.gcast (.*)")
 async def gcast(event):
-    xx = event.pattern_match.group(2)
+    xx = event.pattern_match.group(1)
     if xx:
         msg = xx
     elif event.is_reply:
         msg = await event.get_reply_message()
     else:
-        return await event.edit("`Berikan Sebuah Pesan Atau Reply`")
+        await event.edit("`Berikan Sebuah Pesan Atau Reply`")
+        return
     kk = await event.edit("`Globally Broadcasting Msg...`")
     er = 0
     done = 0
