@@ -3,7 +3,7 @@
   "description": "[Man-Userbot] userbot Telegram modular yang berjalan pada Python 3.9+",
   "logo": "https://telegra.ph/file/9dc4e335feaaf6a214818.jpg",
   "keywords": ["telegram", "userbot", "man-userbot", "modular", "python"],
-  "repository": "https://github.com/mrismanaziz/Man-Userbot",
+  "repository": "https://github.com/tofikdn/Man-Userbot",
   "telegram": "https://t.me/mrismanaziz",
   "success_url": "https://t.me/Lunatic0de",
   "stack": "container",
@@ -37,6 +37,11 @@
       "description": "PM Auto-Ban adalah module untuk bot welcome otomatis ketika ada orang ngePC kamu,jika Mau di aktifkan ubah ke True",
       "value": "False",
       "required": false
+    },
+    "UPSTREAM_REPO_URL": {
+      "description": "UPSTREAM Link Repo Utama",
+      "value": "https://github.com/mrismanaziz/Man-Userbot",
+      "required": true
     },
     "ALIVE_NAME": {
       "description": "Masukan Nama untuk menunjukan pesan di perintah .alive / .afk / .ping dan lain lain",

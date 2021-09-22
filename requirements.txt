@@ -54,13 +54,12 @@ oauth2client
 opencv-python
 patool
 pendulum
-Pillow
+pillow
 pip>=19.2.3
 prettytable
 psutil
 psycopg2
 psycopg2-binary
-pyaztro
 pyaztro
 pybase64
 pyDownload
@@ -99,8 +98,8 @@ wget
 wheel
 wikipedia
 wordcloud
-youtube_search
 youtube-dl
 youtube-search
 youtube-search-python
+search-engine-parser
 zipfile38
