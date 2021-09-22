@@ -34,15 +34,19 @@ async def evaluate(event):
     old_stdout = sys.stdout
     redirected_output = sys.stdout = StringIO()
     redirected_error = sys.stderr = StringIO()
-    stdout, stderr, exc, = None, None, None
+    stdout, stderr, exc, = (
+        None,
+        None,
+        None,
+    )
 
     async def aexec(code, event):
         exec(
-             f"async def __aexec(e, client): "
-             + "\n message = event = e"
-             + "\n reply = await event.get_reply_message()"
-             + "\n chat = (await event.get_chat()).id"
-             + "".join(f"\n {line}" for line in code.split("\n")),
+            f"async def __aexec(e, client): "
+            + "\n message = event = e"
+            + "\n reply = await event.get_reply_message()"
+            + "\n chat = (await event.get_chat()).id"
+            + "".join(f"\n {line}" for line in code.split("\n")),
         )
 
         return await locals()["__aexec"](event, event.client)
