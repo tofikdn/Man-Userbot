@@ -9,26 +9,29 @@
 # @LordUserbot_Group
 # @sharinguserbot
 
-from userbot import CMD_HELP, bot
+from userbot import CMD_HELP
 from userbot.events import register
 
 
-@register(outgoing=True, pattern=r"^\.gcast (.*)")
+@register(outgoing=True, pattern=r"^\.gcast(?: |$)(.*)")
 async def gcast(event):
     xx = event.pattern_match.group(1)
-    if not xx:
-        return await event.edit("`Berikan Sebuah Pesan`")
-    tt = event.text
-    msg = tt[6:]
+    if xx:
+        msg = xx
+    elif event.is_reply:
+        msg = await event.get_reply_message()
+    else:
+        await event.edit("`Berikan Sebuah Pesan Atau Reply`")
+        return
     kk = await event.edit("`Globally Broadcasting Msg...`")
     er = 0
     done = 0
-    async for x in bot.iter_dialogs():
+    async for x in event.client.iter_dialogs():
         if x.is_group:
             chat = x.id
             try:
                 done += 1
-                await bot.send_message(chat, msg)
+                await event.client.send_message(chat, msg)
             except BaseException:
                 er += 1
     await kk.edit(
@@ -46,12 +49,12 @@ async def gucast(event):
     kk = await event.edit("`Globally Broadcasting Msg...`")
     er = 0
     done = 0
-    async for x in bot.iter_dialogs():
+    async for x in event.client.iter_dialogs():
         if x.is_user and not x.entity.bot:
             chat = x.id
             try:
                 done += 1
-                await bot.send_message(chat, msg)
+                await event.client.send_message(chat, msg)
             except BaseException:
                 er += 1
     await kk.edit(
