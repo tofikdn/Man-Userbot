@@ -70,7 +70,7 @@ CMD_HELP.update(
     {
         "chatbot": "**Plugin : **`chatbot`\
       \n\n  •  **Syntax :** `.chatbot` <on/off>\
-      \n  •  **Function :** Ya chatbot\
+      \n  •  **Function :** Untuk membalas chat dengan chatbot AI.\
       "
     }
 )
