@@ -44,11 +44,8 @@ async def _(event):
     try:
         FlagContainer.is_active = True
 
-        text = None
         args = event.message.text.split(" ", 1)
-        if len(args) > 1:
-            text = args[1]
-
+        text = args[1] if len(args) > 1 else None
         chat = await event.get_input_chat()
         await event.delete()
 
@@ -90,11 +87,8 @@ async def _(event):
     try:
         FlagContainer.is_active = True
 
-        text = None
         args = event.message.text.split(" ", 1)
-        if len(args) > 1:
-            text = args[1]
-
+        text = args[1] if len(args) > 1 else None
         chat = await event.get_input_chat()
         await event.delete()
 
