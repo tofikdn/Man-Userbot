@@ -19,7 +19,7 @@ from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY
 from userbot.events import register
 from userbot.utils import humanbytes
 
-MAX_MESSAGE_SIZE_LIMIT = 4095
+MAX_MESSAGE_SIZE_LIMIT = 4096
 
 
 @register(outgoing=True, pattern=r"^\.ls(?: |$)(.*)")
