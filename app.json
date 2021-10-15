@@ -52,8 +52,8 @@
       "value": "https://telegra.ph/file/9dc4e335feaaf6a214818.jpg",
       "required": false
     },
-    "CMD_HANDLER": {
-      "description": "Custom CMD_HANDLER Userbot Mu (Untuk awalan memanggil userbot) Contoh .",
+    "ALIVE_TEKS_CUSTOM": {
+      "description": "Pesan Text Kustom Alive Mu Untuk Perintah .alive (Isi Terserah)",
       "value": ".",
       "required": false
     },
