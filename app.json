@@ -9,15 +9,15 @@
   "stack": "container",
   "env": {
     "API_KEY": {
-      "description": "Dapatkan API KEY di web my.telegram.org. Masukan yg APP ID Telegram",
+      "description": "Dapatkan API KEY di web my.telegram.org Masukan yg APP ID Telegram",
       "required": true
     },
     "API_HASH": {
-      "description": "Dapatkan Api hash di web my.telegram.org.",
+      "description": "Dapatkan API Hash di web my.telegram.org",
       "required": true
     },
      "STRING_SESSION": {
-      "description": "Dapatkan String Session di Grup » https://t.me/sharinguserbot » Lalu ketik #string",
+      "description": "Dapatkan String Session di Grup » https://t.me/SharingUserbot » Lalu ketik #string",
       "required": true
     },
     "HEROKU_APP_NAME": {
@@ -34,7 +34,7 @@
       "required": true
     },
     "PM_AUTO_BAN": {
-      "description": "PM Auto-Ban adalah module untuk bot welcome otomatis ketika ada orang ngePC kamu,jika Mau di aktifkan ubah ke True",
+      "description": "PM Auto-Ban adalah module untuk bot welcome otomatis ketika ada orang ngePC kamu, jika Mau di aktifkan ubah ke True",
       "value": "False",
       "required": false
     },
@@ -52,8 +52,9 @@
       "value": "https://telegra.ph/file/9dc4e335feaaf6a214818.jpg",
       "required": false
     },
-    "ALIVE_TEKS_CUSTOM": {
-      "description": "Pesan Text Kustom Alive Mu Untuk Perintah .alive (Isi Terserah)",
+    "CMD_HANDLER": {
+      "description": "Custom CMD_HANDLER Userbot Mu (Untuk awalan memanggil userbot) Contoh .",
+      "value": ".",
       "required": false
     },
     "S_PACK_NAME": {
