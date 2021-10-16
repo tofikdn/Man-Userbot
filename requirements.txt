@@ -1,6 +1,7 @@
 aiofiles
 aiohttp[speedups]
 async_generator
+asyncurban
 beautifulsoup4
 bitlyshortener
 bs4
