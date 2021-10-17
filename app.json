@@ -54,7 +54,6 @@
     },
     "ALIVE_TEKS_CUSTOM": {
       "description": "Pesan Text Kustom Alive Mu Untuk Perintah .alive (Isi Terserah)",
-      "value": ".",
       "required": false
     },
     "S_PACK_NAME": {
