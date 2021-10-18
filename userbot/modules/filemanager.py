@@ -20,7 +20,7 @@ from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY, bot
 from userbot.events import man_cmd
 from userbot.utils import humanbytes
 
-MAX_MESSAGE_SIZE_LIMIT = 4095
+MAX_MESSAGE_SIZE_LIMIT = 4096
 
 
 @bot.on(man_cmd(outgoing=True, pattern=r"ls(?: |$)(.*)"))

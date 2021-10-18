@@ -94,6 +94,7 @@ SUDO_USERS = set(int(x) for x in os.environ.get("SUDO_USERS", "").split())
 BLACKLIST_CHAT = os.environ.get("BLACKLIST_CHAT", None)
 if not BLACKLIST_CHAT:
     BLACKLIST_CHAT = [-1001473548283]
+
 # JANGAN DI HAPUS GOBLOK 😡 LU COPY/EDIT AJA TINGGAL TAMBAHIN PUNYA LU
 # DI HAPUS GUA GBAN YA 🥴 GUA TANDAIN LU AKUN TELENYA 😡
 
@@ -115,7 +116,6 @@ LOGSPAMMER = sb(os.environ.get("LOGSPAMMER", "True"))
 PM_AUTO_BAN = sb(os.environ.get("PM_AUTO_BAN", "False"))
 PM_LIMIT = int(os.environ.get("PM_LIMIT", 6))
 
-# Custom Handler command
 CMD_HANDLER = os.environ.get("CMD_HANDLER") or "."
 
 SUDO_HANDLER = os.environ.get("SUDO_HANDLER", r"$")
@@ -163,6 +163,7 @@ GOOGLE_CHROME_BIN = os.environ.get(
 
 # set to True if you want to log PMs to your BOTLOG_CHATID
 NC_LOG_P_M_S = bool(os.environ.get("NC_LOG_P_M_S", "False"))
+TAG_LOG = bool(os.environ.get("TAG_LOG", "True"))
 
 # OpenWeatherMap API Key
 OPEN_WEATHER_MAP_APPID = os.environ.get("OPEN_WEATHER_MAP_APPID", None)
@@ -605,7 +606,11 @@ with bot:
                 )
                 await event.answer(reply_pop_up_alert, cache_time=0, alert=True)
 
-        @tgbot.on(events.callbackquery.CallbackQuery(data=re.compile(b"ub_modul_(.*)")))
+        @tgbot.on(
+            events.callbackquery.CallbackQuery(
+                data=re.compile(b"ub_modul_(.*)")
+            )
+        )
         async def on_plug_in_callback_query_handler(event):
             if event.query.user_id == uid:
                 modul_name = event.data_match.group(1).decode("UTF-8")
