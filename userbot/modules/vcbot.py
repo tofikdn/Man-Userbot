@@ -61,8 +61,6 @@ async def play_musik(event):
             f"⏱ **Durasi:** `{duration}`\n"
             f"🎧 **Atas permintaan:** {from_user}"
         )
-        await xnxx.delete()
-        await bot.send_file(chat_id, thumbnail, caption=capt)
     else:
         LAGI_MUTER = True
         NAMA_GC = event.chat.title
@@ -85,8 +83,9 @@ async def play_musik(event):
             "💡 **Status:** `Sedang Memutar`\n"
             f"🎧 **Atas permintaan:** {from_user}"
         )
-        await xnxx.delete()
-        await bot.send_file(chat_id, thumbnail, caption=capt)
+
+    await xnxx.delete()
+    await bot.send_file(chat_id, thumbnail, caption=capt)
 
 
 @bot.on(man_cmd(outgoing=True, pattern="pause$"))
