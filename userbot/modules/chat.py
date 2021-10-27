@@ -23,7 +23,6 @@ from telethon.errors.rpcerrorlist import (
     UserNotMutualContactError,
     UserPrivacyRestrictedError,
 )
-from telethon.tl import functions
 from telethon.tl.functions.channels import (
     GetFullChannelRequest,
     GetParticipantsRequest,
@@ -550,13 +549,13 @@ async def get_users(event):
     async for user in bot.iter_participants(manuserbot.full_chat.id):
         try:
             await bot(InviteToChannelRequest(channel=chat, users=[user.id]))
-            s = s + 1
+            s += 1
             await man.edit(
                 f"**Terminal Running**\n\n• **Menambahkan** `{s}` **orang** \n• **Gagal Menambahkan** `{f}` **orang**\n\n**× LastError:** `{error}`"
             )
         except Exception as e:
             error = str(e)
-            f = f + 1
+            f += 1
     return await man.edit(
         f"**Terminal Finished** \n\n• **Berhasil Menambahkan** `{s}` **orang** \n• **Gagal Menambahkan** `{f}` **orang**"
     )
@@ -570,7 +569,6 @@ async def get_users(event):
 async def scrapmem(event):
     chat = event.chat_id
     await event.edit("`Processing...`")
-    event.client
     members = await event.client.get_participants(chat, aggressive=True)
 
     with open("members.csv", "w", encoding="UTF-8") as f:
@@ -585,7 +583,6 @@ async def scrapmem(event):
 async def admem(event):
     await event.edit("**Proses Menambahkan** `0` **Member**")
     chat = await event.get_chat()
-    event.client
     users = []
     with open("members.csv", encoding="UTF-8") as f:
         rows = csv.reader(f, delimiter=",", lineterminator="\n")

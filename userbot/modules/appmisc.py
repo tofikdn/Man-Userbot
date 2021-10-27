@@ -24,8 +24,9 @@ from telethon.tl.types import (
     UserStatusRecently,
 )
 
+from userbot import CMD_HANDLER as cmd
 from userbot import CMD_HELP, TEMP_DOWNLOAD_DIRECTORY, bot
-from userbot.events import register
+from userbot.events import man_cmd
 
 normiefont = [
     "a",
@@ -95,7 +96,7 @@ if 1 == 1:
     client = bot
 
 
-@register(outgoing=True, pattern=r"^\.app(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"app(?: |$)(.*)"))
 async def apk(e):
     try:
         app_name = e.pattern_match.group(1)
@@ -159,24 +160,7 @@ async def apk(e):
         await e.edit("Exception Occured:- " + str(err))
 
 
-@register(outgoing=True, pattern=r"^\.undelete(?: |$)(.*)")
-async def _(event):
-    if event.fwd_from:
-        return
-    c = await event.get_chat()
-    if c.admin_rights or c.creator:
-        a = await bot.get_admin_log(
-            event.chat_id, limit=1, search="", edit=False, delete=True
-        )
-        for i in a:
-            await event.reply(i.original.action.message)
-    else:
-        await event.edit("**Memerlukan izin Admin untuk melakukan perintah ini**")
-        await asyncio.sleep(3)
-        await event.delete()
-
-
-@register(outgoing=True, pattern=r"^\.calc(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"calc(?: |$)(.*)"))
 async def _(event):
     if event.fwd_from:
         return
@@ -212,7 +196,7 @@ async def _(event):
         await event.edit("use .calc help")
 
 
-@register(outgoing=True, pattern=r"^\.xcd(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"xcd(?: |$)(.*)"))
 async def _(event):
     if event.fwd_from:
         return
@@ -257,7 +241,7 @@ Year: {}""".format(
         await event.edit("xkcd n.{} not found!".format(xkcd_id))
 
 
-@register(outgoing=True, pattern=r"^\.remove(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"remove(?: |$)(.*)"))
 async def _(event):
     if event.fwd_from:
         return
@@ -298,8 +282,7 @@ async def _(event):
                     )
                     e.append(str(e))
                     break
-                else:
-                    c += 1
+                c += 1
         if isinstance(i.status, UserStatusLastMonth):
             m += 1
             if "m" in input_str:
@@ -310,8 +293,7 @@ async def _(event):
                     )
                     e.append(str(e))
                     break
-                else:
-                    c += 1
+                c += 1
         if isinstance(i.status, UserStatusLastWeek):
             w += 1
             if "w" in input_str:
@@ -322,8 +304,7 @@ async def _(event):
                     )
                     e.append(str(e))
                     break
-                else:
-                    c += 1
+                c += 1
         if isinstance(i.status, UserStatusOffline):
             o += 1
             if "o" in input_str:
@@ -334,8 +315,7 @@ async def _(event):
                     )
                     e.append(str(e))
                     break
-                else:
-                    c += 1
+                c += 1
         if isinstance(i.status, UserStatusOnline):
             q += 1
             if "q" in input_str:
@@ -346,8 +326,7 @@ async def _(event):
                     )
                     e.append(str(e))
                     break
-                else:
-                    c += 1
+                c += 1
         if isinstance(i.status, UserStatusRecently):
             r += 1
             if "r" in input_str:
@@ -358,8 +337,7 @@ async def _(event):
                     )
                     e.append(str(e))
                     break
-                else:
-                    c += 1
+                c += 1
         if i.bot:
             b += 1
             if "b" in input_str:
@@ -370,8 +348,7 @@ async def _(event):
                     )
                     e.append(str(e))
                     break
-                else:
-                    c += 1
+                c += 1
         elif i.deleted:
             d += 1
             if "d" in input_str:
@@ -422,13 +399,11 @@ async def ban_user(chat_id, i, rights):
         return False, str(exc)
 
 
-@register(outgoing=True, pattern=r"^\.rnupload(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"rnupload(?: |$)(.*)"))
 async def _(event):
     if event.fwd_from:
         return
-    thumb = None
-    if os.path.exists(thumb_image_path):
-        thumb = thumb_image_path
+    thumb = thumb_image_path if os.path.exists(thumb_image_path) else None
     await event.edit("`Rename & Upload in processing ....`")
     input_str = event.pattern_match.group(1)
     if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
@@ -470,7 +445,7 @@ async def _(event):
         await event.edit("Syntax // .rnupload filename.extension <reply ke media>")
 
 
-@register(outgoing=True, pattern=r"^\.grab(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"grab(?: |$)(.*)"))
 async def potocmd(event):
     """Gets the profile photos of replied users, channels or chats"""
     id = "".join(event.raw_text.split(maxsplit=2)[1:])
@@ -503,7 +478,7 @@ async def potocmd(event):
             return
 
 
-@register(outgoing=True, pattern=r"^\.res(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"res(?: |$)(.*)"))
 async def _(event):
     if event.fwd_from:
         return
@@ -515,7 +490,6 @@ async def _(event):
         await event.edit("**Mohon Balas Ke Link.**")
         return
     chat = "@CheckRestrictionsBot"
-    reply_message.sender
     await event.edit("```Memproses....```")
     async with event.client.conversation(chat) as conv:
         try:
@@ -602,7 +576,7 @@ def get_provider(url):
     return url
 
 
-@register(outgoing=True, pattern=r"^\.watch(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"watch(?: |$)(.*)"))
 async def _(event):
     if event.fwd_from:
         return
@@ -657,7 +631,7 @@ async def _(event):
 # Modified by :- @kirito6969,@deleteduser420
 
 
-@register(outgoing=True, pattern=r"^\.weeb(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"weeb(?: |$)(.*)"))
 async def weebify(event):
 
     args = event.pattern_match.group(1)
@@ -705,7 +679,7 @@ boldfont = [
 ]
 
 
-@register(outgoing=True, pattern=r"^\.bold(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"bold(?: |$)(.*)"))
 async def thicc(bolded):
 
     args = bolded.pattern_match.group(1)
@@ -753,7 +727,7 @@ medievalbold = [
 ]
 
 
-@register(outgoing=True, pattern=r"^\.medibold(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"medibold(?: |$)(.*)"))
 async def mediv(medievalx):
 
     args = medievalx.pattern_match.group(1)
@@ -801,7 +775,7 @@ doublestruckt = [
 ]
 
 
-@register(outgoing=True, pattern=r"^\.doublestruck(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"doublestruck(?: |$)(.*)"))
 async def doublex(doublestrucktx):
 
     args = doublestrucktx.pattern_match.group(1)
@@ -849,7 +823,7 @@ cursiveboldx = [
 ]
 
 
-@register(outgoing=True, pattern=r"^\.curbold(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"curbold(?: |$)(.*)"))
 async def cursive2(cursivebolded):
 
     args = cursivebolded.pattern_match.group(1)
@@ -897,7 +871,7 @@ medival2 = [
 ]
 
 
-@register(outgoing=True, pattern=r"^\.medi(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"medi(?: |$)(.*)"))
 async def medival22(medivallite):
 
     args = medivallite.pattern_match.group(1)
@@ -945,7 +919,7 @@ cursive = [
 ]
 
 
-@register(outgoing=True, pattern=r"^\.cur(?: |$)(.*)")
+@bot.on(man_cmd(outgoing=True, pattern=r"cur(?: |$)(.*)"))
 async def xcursive(cursivelite):
 
     args = cursivelite.pattern_match.group(1)
@@ -965,8 +939,8 @@ async def xcursive(cursivelite):
 
 CMD_HELP.update(
     {
-        "watch": "**Plugin : **`watch`\
-        \n\n  •  **Syntax :** `.watch` <nama movie/tv>\
+        "watch": f"**Plugin : **`watch`\
+        \n\n  •  **Syntax :** `{cmd}watch` <nama movie/tv>\
         \n  •  **Function : **Untuk Mengetahui Detail Tentang Film.\
     "
     }
@@ -974,8 +948,8 @@ CMD_HELP.update(
 
 CMD_HELP.update(
     {
-        "randompp": "**Plugin : **`randompp`\
-        \n\n  •  **Syntax :** `.randompp`\
+        "randompp": f"**Plugin : **`randompp`\
+        \n\n  •  **Syntax :** `{cmd}randompp`\
         \n  •  **Function : **Otomatis Mengganti Foto Profile Mu, Untuk Stop ini Ketik .restart\
     "
     }
@@ -983,8 +957,8 @@ CMD_HELP.update(
 
 CMD_HELP.update(
     {
-        "glitch": "**Plugin : **`glitch`\
-        \n\n  •  **Syntax :** `.glitch` <Reply Ke Media>\
+        "glitch": f"**Plugin : **`glitch`\
+        \n\n  •  **Syntax :** `{cmd}glitch` <Reply Ke Media>\
         \n  •  **Function : **Memberikan Glitch (Gif , Stickers , Gambar, Video) Ke Gif Dan Level Glitch 1 - 8.\nJika Tidak Memberikan Level Otomatis Default Ke Level 2\
     "
     }
@@ -992,10 +966,10 @@ CMD_HELP.update(
 
 CMD_HELP.update(
     {
-        "grab": "**Plugin : **`grab`\
-        \n\n  •  **Syntax :** `.grab` <reply ke user yang ingin di grab>\
-        \n  •  **Function : **Balas Ke Pesan Pengguna Telegram dan Ketik `.grab` Atau `.grab <count>` Untuk Mengambil Foto Profil.\
-        \n\n  •  **Syntax :** `.grab` <jumlah foto>\
+        "grab": f"**Plugin : **`grab`\
+        \n\n  •  **Syntax :** `{cmd}grab` <reply ke user yang ingin di grab>\
+        \n  •  **Function : **Balas Ke Pesan Pengguna Telegram dan Ketik `{cmd}grab` Atau `{cmd}grab <count>` Untuk Mengambil Foto Profil.\
+        \n\n  •  **Syntax :** `{cmd}grab` <jumlah foto>\
         \n  •  **Function : **Untuk Mengambil Foto Profil dengan jumlah foto yg di inginkan.\
     "
     }
@@ -1003,26 +977,26 @@ CMD_HELP.update(
 
 CMD_HELP.update(
     {
-        "bannedall": "**Plugin : **`remove`.\
-        \n\n  •  **Syntax :** `.remove`\
+        "bannedall": f"**Plugin : **`bannedall`.\
+        \n\n  •  **Syntax :** `{cmd}remove`\
         \n  •  **Function : **Untuk Menganalisa user dari grup secara spesifik\
-        \n\n  •  **Syntax :** `.remove d`\
+        \n\n  •  **Syntax :** `{cmd}remove d`\
         \n  •  **Function : **Untuk mengkik user dari grup secara spesifik\
-        \n\n  •  **Syntax :** `.remove y`\
+        \n\n  •  **Syntax :** `{cmd}remove y`\
         \n  •  **Function : **Untuk Membanned Akun yang Terakhir Dilihat setahun yang lalu\
-        \n\n  •  **Syntax :** `.remove m`\
+        \n\n  •  **Syntax :** `{cmd}remove m`\
         \n  •  **Function : **Untuk Membanned Akun yang Terakhir Dilihat sebulan yang lalu\
-        \n\n  •  **Syntax :** `.remove w`\
+        \n\n  •  **Syntax :** `{cmd}remove w`\
         \n  •  **Function : **Untuk Membanned Akun yang Terakhir Dilihat seminggu yang lalu\
-        \n\n  •  **Syntax :** `.remove o`\
+        \n\n  •  **Syntax :** `{cmd}remove o`\
         \n  •  **Function : **Untuk Membanned Akun yang sedang offline\
-        \n\n  •  **Syntax :** `.remove q`\
+        \n\n  •  **Syntax :** `{cmd}remove q`\
         \n  •  **Function : **Untuk Membanned Akun yang sedang online\
-        \n\n  •  **Syntax :** `.remove r`\
+        \n\n  •  **Syntax :** `{cmd}remove r`\
         \n  •  **Function : **Untuk Membanned Akun yang terakhir dilihat\
-        \n\n  •  **Syntax :** `.remove b`\
+        \n\n  •  **Syntax :** `{cmd}remove b`\
         \n  •  **Function : **Untuk Membanned Bot yang ada di Grup chat\
-        \n\n  •  **Syntax :** `.remove n`\
+        \n\n  •  **Syntax :** `{cmd}remove n`\
         \n  •  **Function : **Untuk Membanned Akun yang Last Seen A Long Time Ago\
         \n\n **HATI HATI PLUGIN INI BERBAHAYA, MOHON GUNAKAN DENGAN BIJAK**\
     "
@@ -1031,8 +1005,8 @@ CMD_HELP.update(
 
 CMD_HELP.update(
     {
-        "rnupload": "**Plugin : **`rnupload`\
-        \n\n  •  **Syntax :** `.rnupload`\
+        "rnupload": f"**Plugin : **`rnupload`\
+        \n\n  •  **Syntax :** `{cmd}rnupload`\
         \n  •  **Function : **Untuk Rename dan Upload, Balas Ke Media Dan Ketik .rnupload xyz.jpg\
     "
     }
@@ -1041,21 +1015,19 @@ CMD_HELP.update(
 
 CMD_HELP.update(
     {
-        "appmisc": "`.app`\
-\nUsage: ketik `.app namaapp` Dan Dapatkan Detail Informasi App.\
-\n\n`.undlt`\
-\nUsage: urungkan pesan yang dihapus tetapi Anda harus menjadi admin.\
+        "appmisc": f"`{cmd}app`\
+\nUsage: ketik `{cmd}app namaapp` Dan Dapatkan Detail Informasi App.\
 \n\n`.calc`\
-\nUsage: `.calc <term1><operator><term2>\nUntuk eg .calc 02*02 Atau 99*99 (Angka Nol Penting) (Minimal Dua Suku Dan Dua Digit).\
-\n\n`.xcd`\
+\nUsage: `{cmd}calc <term1><operator><term2>\nUntuk eg {cmd}calc 02*02 Atau 99*99 (Angka Nol Penting) (Minimal Dua Suku Dan Dua Digit).\
+\n\n`{cmd}xcd`\
 \nUsage: Ketik xcd <query>.ps:Aku Sangat Bosan\
-\n\n`.res`\
-\nUsage: Ketik Username Akun,Channel,Group Atau Bot Bersama .res Dan Check Batasan\
-\n\n`.weeb` <text>\
+\n\n`{cmd}res`\
+\nUsage: Ketik Username Akun,Channel,Group Atau Bot Bersama {cmd}res Dan Check Batasan\
+\n\n`{cmd}weeb` <text>\
 \nUsage:Teks Weebify\
-\n\nKetik (`.bold <Teks>`,`.cur <Teks>`,`.curbold <Teks>`,`.medi <Teks>`,`.medibold <Teks>`,`.doublestruck <Teks>`)\
+\n\nKetik (`{cmd}bold <Teks>`,`{cmd}cur <Teks>`,`{cmd}curbold <Teks>`,`{cmd}medi <Teks>`,`{cmd}medibold <Teks>`,`{cmd}doublestruck <Teks>`)\
 \nUsage: Buat Teks <Bold,Cursive,Cursivebold,Medival,Medivalbold,Gayishbold>\
-\n\n`.glitchs` Balas Ke Media\
+\n\n`{cmd}glitchs` Balas Ke Media\
 \nUsage: Memberikan Glitch (Gif , Stickers , Gambar, Video) Ke Sticker Dan Level Glitch 1 to 8.\
 Jika Tidak Memberikan Level Otomatis Default Ke Level 2."
     }
