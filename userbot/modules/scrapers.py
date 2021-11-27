@@ -302,7 +302,6 @@ async def _(event):
     if event.fwd_from:
         return
     if "trim" in event.raw_text:
-
         return
     input_str = event.pattern_match.group(1)
     if event.reply_to_msg_id:
