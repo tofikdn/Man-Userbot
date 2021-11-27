@@ -1331,7 +1331,7 @@ async def _(event):
 
         await event.edit(input_str)
 
-        animation_chars = ["▮", "▯", "▬", "▭" "‎"]
+        animation_chars = ["▮", "▯", "▬", "▭", "‎"]
 
         animation_interval = 0.1
 
@@ -1357,7 +1357,7 @@ async def _(event):
 
         await event.edit(input_str)
 
-        animation_chars = ["◧", "◨", "◧", "◨" "‎"]
+        animation_chars = ["◧", "◨", "◧", "◨", "‎"]
 
         animation_interval = 0.1
 
@@ -1383,7 +1383,7 @@ async def _(event):
 
         await event.edit(input_str)
 
-        animation_chars = ["╹", "╻", "╹", "╻" "‎"]
+        animation_chars = ["╹", "╻", "╹", "╻", "‎"]
 
         animation_interval = 0.1
 
@@ -1409,7 +1409,7 @@ async def _(event):
 
         await event.edit(input_str)
 
-        animation_chars = ["⚫", "⬤", "●", "∘" "‎"]
+        animation_chars = ["⚫", "⬤", "●", "∘", "‎"]
 
         animation_interval = 0.1
 
@@ -1435,7 +1435,7 @@ async def _(event):
 
         await event.edit(input_str)
 
-        animation_chars = ["🖤", "❤️", "🖤", "❤️" "‎"]
+        animation_chars = ["🖤", "❤️", "🖤", "❤️", "‎"]
 
         animation_interval = 0.1
 
@@ -1713,7 +1713,7 @@ async def _(event):
 
 CMD_HELP.update(
     {
-        "memes": f"`{cmd}eye`\
+        "funmemes": f"`{cmd}eye`\
 \nUsage: Lihat Sendiri.\
 \n\n`{cmd}earth`\
 \nusage: Memutar Bumi 🌎🌎\

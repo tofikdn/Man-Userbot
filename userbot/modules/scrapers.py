@@ -18,9 +18,9 @@ import os
 import re
 import shutil
 import time
-from asyncio import sleep
+from asyncio import get_event_loop, sleep
+from glob import glob
 from re import findall, match
-from urllib.parse import quote_plus
 
 import asyncurban
 import barcode
@@ -29,18 +29,24 @@ import qrcode
 import requests
 from barcode.writer import ImageWriter
 from bs4 import BeautifulSoup
-from emoji import get_emoji_regexp
 from googletrans import LANGUAGES, Translator
 from gtts import gTTS
 from gtts.lang import tts_langs
+from hachoir.metadata import extractMetadata
+from hachoir.parser import createParser
 from requests import get
 from search_engine_parser import BingSearch, GoogleSearch, YahooSearch
 from search_engine_parser.core.exceptions import NoResultsOrTrafficError
-from telethon.tl.types import DocumentAttributeAudio, MessageMediaPhoto
+from telethon.tl.types import (
+    DocumentAttributeAudio,
+    DocumentAttributeVideo,
+    MessageMediaPhoto,
+)
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
-from youtube_dl import YoutubeDL
-from youtube_dl.utils import (
+from youtube_search import YoutubeSearch
+from yt_dlp import YoutubeDL
+from yt_dlp.utils import (
     ContentTooShortError,
     DownloadError,
     ExtractorError,
@@ -50,7 +56,6 @@ from youtube_dl.utils import (
     UnavailableVideoError,
     XAttrMetadataError,
 )
-from youtube_search import YoutubeSearch
 
 from userbot import BOTLOG, BOTLOG_CHATID
 from userbot import CMD_HANDLER as cmd
@@ -63,6 +68,7 @@ from userbot import (
     bot,
 )
 from userbot.events import man_cmd
+from userbot.modules.upload_download import get_video_thumb
 from userbot.utils import (
     chrome,
     edit_delete,
@@ -71,11 +77,10 @@ from userbot.utils import (
     options,
     progress,
 )
+from userbot.utils.FastTelethon import upload_file
 
-CARBONLANG = "auto"
 TTS_LANG = "id"
 TRT_LANG = "id"
-TEMP_DOWNLOAD_DIRECTORY = "/root/userbot/.bin"
 
 
 async def ocr_space_file(
@@ -94,77 +99,6 @@ async def ocr_space_file(
             data=payload,
         )
     return r.json()
-
-
-@bot.on(man_cmd(outgoing=True, pattern=r"crblang (.*)"))
-async def setlang(prog):
-    global CARBONLANG
-    CARBONLANG = prog.pattern_match.group(1)
-    await prog.edit(f"Bahasa untuk carbon.now.sh mulai {CARBONLANG}")
-
-
-@bot.on(man_cmd(outgoing=True, pattern="carbon"))
-async def carbon_api(e):
-    """A Wrapper for carbon.now.sh"""
-    await e.edit("`Processing..`")
-    CARBON = "https://carbon.now.sh/?l={lang}&code={code}"
-    global CARBONLANG
-    textx = await e.get_reply_message()
-    pcode = e.text
-    if pcode[8:]:
-        pcode = str(pcode[8:])
-    elif textx:
-        pcode = str(textx.message)  # Importing message to module
-    code = quote_plus(pcode)  # Converting to urlencoded
-    await e.edit("`Processing..\n25%`")
-    if os.path.isfile("/root/userbot/.bin/carbon.png"):
-        os.remove("/root/userbot/.bin/carbon.png")
-    url = CARBON.format(code=code, lang=CARBONLANG)
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.binary_location = GOOGLE_CHROME_BIN
-    chrome_options.add_argument("--window-size=1920x1080")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-gpu")
-    prefs = {"download.default_directory": "/root/userbot/.bin"}
-    chrome_options.add_experimental_option("prefs", prefs)
-    driver = webdriver.Chrome(executable_path=CHROME_DRIVER, options=chrome_options)
-    driver.get(url)
-    await e.edit("`Processing..\n50%`")
-    download_path = "/root/userbot/.bin"
-    driver.command_executor._commands["send_command"] = (
-        "POST",
-        "/session/$sessionId/chromium/send_command",
-    )
-    params = {
-        "cmd": "Page.setDownloadBehavior",
-        "params": {"behavior": "allow", "downloadPath": download_path},
-    }
-    driver.execute("send_command", params)
-    driver.find_element_by_xpath("//button[contains(text(),'Export')]").click()
-    # driver.find_element_by_xpath("//button[contains(text(),'4x')]").click()
-    # driver.find_element_by_xpath("//button[contains(text(),'PNG')]").click()
-    await e.edit("`Processing..\n75%`")
-    # Waiting for downloading
-    while not os.path.isfile("/root/userbot/.bin/carbon.png"):
-        await sleep(0.5)
-    await e.edit("`Processing..\n100%`")
-    file = "/root/userbot/.bin/carbon.png"
-    await e.edit("`Uploading..`")
-    await e.client.send_file(
-        e.chat_id,
-        file,
-        caption="Made using [Carbon](https://carbon.now.sh/about/),\
-        \na project by [Dawn Labs](https://dawnlabs.io/)",
-        force_document=True,
-        reply_to=e.message.reply_to_msg_id,
-    )
-
-    os.remove("/root/userbot/.bin/carbon.png")
-    driver.quit()
-    # Removing carbon.png after uploading
-    await e.delete()  # Deleting msg
 
 
 @bot.on(man_cmd(outgoing=True, pattern=r"img (.*)"))
@@ -394,7 +328,7 @@ async def _(event):
         await event.edit(str(exc))
 
 
-@bot.on(man_cmd(pattern=r"\.lang (tr|tts) (.*)", outgoing=True))
+@bot.on(man_cmd(pattern=r"lang (tr|tts) (.*)", outgoing=True))
 async def lang(value):
     """For .lang command, change the default langauge of userbot scrapers."""
     util = value.pattern_match.group(1).lower()
@@ -465,24 +399,27 @@ async def yt_search(video_q):
             channel = i["channel"]
             duration = i["duration"]
             views = i["views"]
-            output += f"[{title}]({link})\nChannel: `{channel}`\nDuration: {duration} | {views}\n\n"
+            output += f"🏷 **Judul:** [{title}]({link})\n⏱ **Durasi:** {duration}\n👀 {views}\n🖥 **Channel:** `{channel}`\n━━\n"
         except IndexError:
             break
 
     await video_q.edit(output, link_preview=False)
 
 
-@bot.on(man_cmd(outgoing=True, pattern=r".yt(audio|video) (.*)"))
+@bot.on(man_cmd(outgoing=True, pattern=r"yt(audio|video( \d{0,4})?) (.*)"))
 async def download_video(v_url):
     """For .yt command, download media from YouTube and many other sites."""
     dl_type = v_url.pattern_match.group(1).lower()
-    url = v_url.pattern_match.group(2)
+    reso = v_url.pattern_match.group(2)
+    reso = reso.strip() if reso else None
+    url = v_url.pattern_match.group(3)
 
     await v_url.edit("`Preparing to download...`")
+    s_time = time.time()
     video = False
     audio = False
 
-    if dl_type == "audio":
+    if "audio" in dl_type:
         opts = {
             "format": "bestaudio",
             "addmetadata": True,
@@ -491,33 +428,47 @@ async def download_video(v_url):
             "prefer_ffmpeg": True,
             "geo_bypass": True,
             "nocheckcertificate": True,
+            "noprogress": True,
             "postprocessors": [
                 {
                     "key": "FFmpegExtractAudio",
                     "preferredcodec": "mp3",
-                    "preferredquality": "320",
+                    "preferredquality": "192",
                 }
             ],
-            "outtmpl": "%(id)s.%(ext)s",
+            "outtmpl": os.path.join(
+                TEMP_DOWNLOAD_DIRECTORY, str(s_time), "%(title)s.%(ext)s"
+            ),
             "quiet": True,
             "logtostderr": False,
+            "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+            "proxy": "",
+            "extractor-args": "youtube:player_client=_music",
         }
         audio = True
 
-    elif dl_type == "video":
+    elif "video" in dl_type:
+        quality = (
+            f"bestvideo[height<={reso}]+bestaudio/best[height<={reso}]"
+            if reso
+            else "bestvideo+bestaudio/best"
+        )
         opts = {
-            "format": "best",
+            "format": quality,
             "addmetadata": True,
             "key": "FFmpegMetadata",
             "prefer_ffmpeg": True,
             "geo_bypass": True,
             "nocheckcertificate": True,
-            "postprocessors": [
-                {"key": "FFmpegVideoConvertor", "preferedformat": "mp4"}
-            ],
-            "outtmpl": "%(id)s.%(ext)s",
+            "noprogress": True,
+            "outtmpl": os.path.join(
+                TEMP_DOWNLOAD_DIRECTORY, str(s_time), "%(title)s.%(ext)s"
+            ),
             "logtostderr": False,
             "quiet": True,
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 Edg/87.0.664.75",
+            "proxy": "",
+            "extractor-args": "youtube:player_client=all",
         }
         video = True
 
@@ -552,27 +503,28 @@ async def download_video(v_url):
             f"**Sedang Mengupload Lagu:**\n`{rip_data.get('title')}`"
             f"\nby **{rip_data.get('uploader')}**"
         )
-        f_name = rip_data.get("id") + ".mp3"
+        f_name = glob(os.path.join(TEMP_DOWNLOAD_DIRECTORY, str(s_time), "*.mp3"))[0]
         with open(f_name, "rb") as f:
             result = await upload_file(
                 client=v_url.client,
                 file=f,
                 name=f_name,
-                progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
+                progress_callback=lambda d, t: get_event_loop().create_task(
                     progress(
                         d, t, v_url, c_time, "Uploading..", f"{rip_data['title']}.mp3"
                     )
                 ),
             )
-        img_extensions = ["jpg", "jpeg", "webp"]
-        img_filenames = [
-            fn_img
-            for fn_img in os.listdir()
-            if any(fn_img.endswith(ext_img) for ext_img in img_extensions)
-        ]
-        thumb_image = img_filenames[0]
+
+        thumb_image = [
+            x
+            for x in glob(os.path.join(TEMP_DOWNLOAD_DIRECTORY, str(s_time), "*"))
+            if not x.endswith(".mp3")
+        ][0]
         metadata = extractMetadata(createParser(f_name))
-        duration = metadata.get("duration").seconds if metadata.has("duration") else 0
+        duration = 0
+        if metadata and metadata.has("duration"):
+            duration = metadata.get("duration").seconds
         await v_url.client.send_file(
             v_url.chat_id,
             result,
@@ -586,31 +538,40 @@ async def download_video(v_url):
             ],
             thumb=thumb_image,
         )
-        os.remove(thumb_image)
-        os.remove(f_name)
         await v_url.delete()
     elif video:
         await v_url.edit(
             f"**Sedang Mengupload Video:**\n`{rip_data.get('title')}`"
             f"\nby **{rip_data.get('uploader')}**"
         )
-        f_name = rip_data.get("id") + ".mp4"
-        with open(f_name, "rb") as f:
+        f_path = glob(os.path.join(TEMP_DOWNLOAD_DIRECTORY, str(s_time), "*"))[0]
+        # Noob way to convert from .mkv to .mp4
+        if f_path.endswith(".mkv") or f_path.endswith(".webm"):
+            base = os.path.splitext(f_path)[0]
+            os.rename(f_path, base + ".mp4")
+            f_path = glob(os.path.join(TEMP_DOWNLOAD_DIRECTORY, str(s_time), "*"))[0]
+        f_name = os.path.basename(f_path)
+        with open(f_path, "rb") as f:
             result = await upload_file(
                 client=v_url.client,
                 file=f,
                 name=f_name,
-                progress_callback=lambda d, t: asyncio.get_event_loop().create_task(
-                    progress(
-                        d, t, v_url, c_time, "Uploading..", f"{rip_data['title']}.mp4"
-                    )
+                progress_callback=lambda d, t: get_event_loop().create_task(
+                    progress(d, t, v_url, c_time, "Uploading..", f_name)
                 ),
             )
-        thumb_image = await get_video_thumb(f_name, "thumb.png")
-        metadata = extractMetadata(createParser(f_name))
-        duration = metadata.get("duration").seconds if metadata.has("duration") else 0
-        width = metadata.get("width") if metadata.has("width") else 0
-        height = metadata.get("height") if metadata.has("height") else 0
+        thumb_image = await get_video_thumb(f_path, "thumb.png")
+        metadata = extractMetadata(createParser(f_path))
+        duration = 0
+        width = 0
+        height = 0
+        if metadata:
+            if metadata.has("duration"):
+                duration = metadata.get("duration").seconds
+            if metadata.has("width"):
+                width = metadata.get("width")
+            if metadata.has("height"):
+                height = metadata.get("height")
         await v_url.client.send_file(
             v_url.chat_id,
             result,
@@ -623,16 +584,10 @@ async def download_video(v_url):
                     supports_streaming=True,
                 )
             ],
-            caption=rip_data["title"],
+            caption=f"[{rip_data.get('title')}]({url})",
         )
-        os.remove(f_name)
         os.remove(thumb_image)
         await v_url.delete()
-
-
-def deEmojify(inputString):
-    """Remove emojis and other non-safe characters from string"""
-    return get_emoji_regexp().sub("", inputString)
 
 
 @bot.on(man_cmd(outgoing=True, pattern=r"rbg(?: |$)(.*)"))
@@ -679,7 +634,6 @@ async def kbg(remob):
             await remob.client.send_file(
                 remob.chat_id,
                 remove_bg_image,
-                caption="Support @SharingUserbot",
                 force_document=True,
                 reply_to=message_id,
             )
@@ -935,17 +889,6 @@ CMD_HELP.update(
 
 CMD_HELP.update(
     {
-        "carbon": f"**Plugin : **`carbon`\
-        \n\n  •  **Syntax :** `{cmd}carbon` <text/reply>\
-        \n  •  **Function : **Percantik kode Anda menggunakan carbon.now.sh\
-        \n\n  •  **NOTE :** Gunakan {cmd}crblang <text> untuk menyetel bahasa kode Anda.\
-    "
-    }
-)
-
-
-CMD_HELP.update(
-    {
         "removebg": "**Plugin : **`removebg`\
         \n\n  •  **Syntax :** `{cmd}rbg` <Tautan ke Gambar> atau balas gambar apa pun (Peringatan: tidak berfungsi pada stiker.)\
         \n  •  **Function : **Menghapus latar belakang gambar, menggunakan API remove.bg\
@@ -959,16 +902,6 @@ CMD_HELP.update(
         "ocr": f"**Plugin : **`ocr`\
         \n\n  •  **Syntax :** `{cmd}ocr` <kode bahasa>\
         \n  •  **Function : **Balas gambar atau stiker untuk mengekstrak teks media tersebut.\
-    "
-    }
-)
-
-
-CMD_HELP.update(
-    {
-        "youtube": f"**Plugin : **`youtube`\
-        \n\n  •  **Syntax :** `{cmd}yt` <jumlah> <query>\
-        \n  •  **Function : **Melakukan Pencarian YouTube. Dapat menentukan jumlah hasil yang dibutuhkan (default adalah 5)\
     "
     }
 )
@@ -1024,10 +957,17 @@ CMD_HELP.update(
 CMD_HELP.update(
     {
         "ytdl": f"**Plugin : **`ytdl`\
+        \n\n  •  **Syntax :** `{cmd}yt` <jumlah> <query>\
+        \n  •  **Function : **Melakukan Pencarian YouTube. Dapat menentukan jumlah hasil yang dibutuhkan (default adalah 5)\
         \n\n  •  **Syntax :** `{cmd}ytaudio` <url>\
-        \n  •  **Function : **Untuk Mendownload lagu dari YouTube.\
-        \n\n  •  **Syntax :** `{cmd}ytvideo` <url>\
-        \n  •  **Function : **Untuk Mendownload video dari YouTube.\
+        \n  •  **Function : **Untuk Mendownload lagu dari YouTube dengan link.\
+        \n\n  •  **Syntax :** `{cmd}ytvideo` <quality> <url>\
+        \n  •  **Quality : **`144`, `240`, `360`, `480`, `720`, `1080`, `2160`\
+        \n  •  **Function : **Untuk Mendownload video dari YouTube dengan link.\
+        \n\n  •  **Syntax :** `{cmd}song` <nama lagu>\
+        \n  •  **Function : **Untuk mendownload lagu dari youtube dengan nama lagu.\
+        \n\n  •  **Syntax :** `{cmd}vsong` <nama lagu>\
+        \n  •  **Function : **Untuk mendownload Video dari youtube dengan nama video.\
     "
     }
 )

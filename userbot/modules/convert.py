@@ -15,37 +15,36 @@ import os
 from PIL import Image
 
 from userbot import CMD_HANDLER as cmd
-from userbot import CMD_HELP, bot
-from userbot.events import man_cmd
+from userbot import CMD_HELP
+from userbot.utils import edit_delete, edit_or_reply, man_cmd, runcmd
 
 
-@bot.on(
-    man_cmd(outgoing=True, pattern=r"convert ?(foto|sound|gif|voice|photo|mp3)? ?(.*)")
-)
+@man_cmd(pattern="convert ?(foto|audio|gif|voice|photo|mp3)? ?(.*)")
 async def cevir(event):
     botman = event.pattern_match.group(1)
     try:
         if len(botman) < 1:
-            await event.edit(
-                "**Perintah tidak diketahui! ketik** `.help convert` **bila butuh bantuan**"
+            await edit_delete(
+                event,
+                "**Perintah tidak diketahui! ketik** `.help convert` **bila butuh bantuan**",
+                30,
             )
             return
     except BaseException:
-        await event.edit(
-            "**Perintah tidak diketahui! ketik** `.help convert` **bila butuh bantuan**"
+        await edit_delete(
+            event,
+            "**Perintah tidak diketahui! ketik** `.help convert` **bila butuh bantuan**",
+            30,
         )
         return
-
     if botman in ["foto", "photo"]:
         rep_msg = await event.get_reply_message()
-
         if not event.is_reply or not rep_msg.sticker:
-            await event.edit("**Harap balas ke stiker.**")
+            await edit_delete(event, "**Harap balas ke stiker.**")
             return
-        await event.edit("`Mengconvert ke foto...`")
+        xxnx = await edit_or_reply(event, "`Mengconvert ke foto...`")
         foto = io.BytesIO()
         foto = await event.client.download_media(rep_msg.sticker, foto)
-
         im = Image.open(foto).convert("RGB")
         im.save("sticker.png", "png")
         await event.client.send_file(
@@ -53,27 +52,21 @@ async def cevir(event):
             "sticker.png",
             reply_to=rep_msg,
         )
-
-        await event.delete()
+        await xxnx.delete()
         os.remove("sticker.png")
-    elif botman in ["sound", "voice"]:
+    elif botman in ["sound", "audio"]:
         EFEKTLER = ["bengek", "robot", "jedug", "fast", "echo"]
-
         efekt = event.pattern_match.group(2)
-
         if len(efekt) < 1:
-            await event.edit(
-                "**Efek yang Anda tentukan tidak ditemukan!**\n**Efek yang dapat Anda gunakan:** bengek/robot/jedug/fast/echo`"
+            return await edit_delete(
+                event,
+                "**Efek yang Anda tentukan tidak ditemukan!**\n**Efek yang dapat Anda gunakan:** bengek/robot/jedug/fast/echo`",
+                30,
             )
-            return
-
         rep_msg = await event.get_reply_message()
-
         if not event.is_reply or not (rep_msg.voice or rep_msg.audio):
-            await event.edit("**Harap balas ke file Audio.**")
-            return
-
-        await event.edit("`Applying effect...`")
+            return await edit_delete(event, "**Harap balas ke file Audio.**")
+        xxx = await edit_or_reply(event, "`Applying effect...`")
         if efekt in EFEKTLER:
             indir = await rep_msg.download_media()
             KOMUT = {
@@ -90,89 +83,68 @@ async def cevir(event):
             await event.client.send_file(
                 event.chat_id,
                 "output.mp3",
+                thumb="userbot/resources/logo.jpg",
                 reply_to=rep_msg,
             )
-
-            await event.delete()
+            await xxx.delete()
             os.remove(indir)
             os.remove("output.mp3")
         else:
-            await event.edit(
+            await xxx.edit(
                 "**Efek yang Anda tentukan tidak ditemukan!**\n**Efek yang dapat Anda gunakan:** bengek/robot/jedug/fast/echo`"
             )
-    elif botman == "gif":
-        rep_msg = await event.get_reply_message()
-
-        if (
-            not event.is_reply
-            or not rep_msg.video
-            and rep_msg.document.mime_type != "application/x-tgsticker"
-        ):
-            await event.edit("**Harap balas ke Video!**")
-            return
-
-        await event.edit("`Mengconvert ke gif...`")
-        video = io.BytesIO()
-        video = await event.client.download_media(rep_msg)
-        if rep_msg.document.mime_type == "application/x-tgsticker":
-            print(f"lottie_convert.py '{video}' out.gif")
-            gif = await asyncio.create_subprocess_shell(
-                f"lottie_convert.py '{video}' out.gif"
-            )
-        else:
-            gif = await asyncio.create_subprocess_shell(
-                f"ffmpeg -i '{video}' -filter_complex 'fps=20,scale=320:-1:flags=lanczos,split [o1] [o2];[o1] palettegen [p]; [o2] fifo [o3];[o3] [p] paletteuse' out.gif"
-            )
-        await gif.communicate()
-        await event.edit("`Uploading Gif...`")
-
-        try:
-            await event.client.send_file(
-                event.chat_id,
-                "out.gif",
-                reply_to=rep_msg,
-            )
-        except BaseException:
-            await event.edit("**Saya tidak bisa mengubahnya menjadi gif 🥺**")
-            await event.delete()
-            os.remove("out.gif")
-            os.remove(video)
-        finally:
-            await event.delete()
-            os.remove("out.gif")
-            os.remove(video)
     elif botman == "mp3":
         rep_msg = await event.get_reply_message()
         if not event.is_reply or not rep_msg.video:
-            await event.edit("**Harap balas ke Video!**")
-            return
-        await event.edit("`Mengconvert ke sound...`")
+            return await edit_delete(event, "**Harap balas ke Video!**")
+        xx = await edit_or_reply(event, "`Mengconvert ke sound...`")
         video = io.BytesIO()
         video = await event.client.download_media(rep_msg.video)
         gif = await asyncio.create_subprocess_shell(
             f"ffmpeg -y -i '{video}' -vn -b:a 128k -c:a libmp3lame out.mp3"
         )
         await gif.communicate()
-        await event.edit("`Uploading Sound...`")
-
+        await xx.edit("`Uploading Sound...`")
         try:
             await event.client.send_file(
                 event.chat_id,
                 "out.mp3",
+                thumb="userbot/resources/logo.jpg",
                 reply_to=rep_msg,
             )
         except BaseException:
             os.remove(video)
-            return await event.edit("**Tidak dapat mengconvert ke audio! 🥺**")
-
-        await event.delete()
+            return await xx.edit("**Tidak dapat mengconvert ke audio! 🥺**")
+        await xx.delete()
         os.remove("out.mp3")
         os.remove(video)
     else:
-        await event.edit(
+        await xx.edit(
             "**Perintah tidak diketahui! ketik** `.help convert` **bila butuh bantuan**"
         )
         return
+
+
+@man_cmd(pattern="makevoice$")
+async def makevoice(event):
+    if not event.reply_to:
+        return await edit_delete(event, "**Mohon Balas Ke Audio atau video**")
+    msg = await event.get_reply_message()
+    if not event.is_reply or not (msg.audio or msg.video):
+        return await edit_delete(event, "**Mohon Balas Ke Audio atau video**")
+    xxnx = await edit_or_reply(event, "`Processing...`")
+    dl = msg.file.name
+    file = await msg.download_media(dl)
+    await xxnx.edit("`Converting to Voice Note...`")
+    await runcmd(
+        f"ffmpeg -i '{file}' -map 0:a -codec:a libopus -b:a 100k -vbr on man.opus"
+    )
+    await event.client.send_message(
+        event.chat_id, file="man.opus", force_document=False, reply_to=msg
+    )
+    await xxnx.delete()
+    os.remove(file)
+    os.remove("man.opus")
 
 
 CMD_HELP.update(
@@ -182,11 +154,11 @@ CMD_HELP.update(
         \n  •  **Function : **Untuk Mengconvert sticker ke foto\
         \n\n  •  **Syntax :** `{cmd}convert mp3`\
         \n  •  **Function : **Untuk Mengconvert dari video ke file mp3\
-        \n\n  •  **Syntax :** `{cmd}convert gif`\
-        \n  •  **Function : **Untuk Mengconvert video ke gif\
-        \n\n  •  **Syntax :** `{cmd}convert audio`\
+        \n\n  •  **Syntax :** `{cmd}makevoice`\
+        \n  •  **Function : **Untuk Mengconvert audio ke voice note\
+        \n\n  •  **Syntax :** `{cmd}convert audio` <efek>\
         \n  •  **Function : **Untuk Menambahkan efek suara jadi berskin\
-        \n  •  **List Efek : `bengek`, `jedug`, `echo`, `robot`\
+        \n  •  **List Efek :** `bengek`, `jedug`, `echo`, `robot`\
     "
     }
 )

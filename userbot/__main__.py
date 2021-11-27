@@ -3,19 +3,25 @@
 # Licensed under the Raphielscape Public License, Version 1.c (the "License");
 # you may not use this file except in compliance with the License.
 #
+# Copyright (C) 2021 TeamUltroid for autobot
+# Recode by @mrismanaziz
+# FROM Man-Userbot <https://github.com/mrismanaziz/Man-Userbot>
+# t.me/SharingUserbot & t.me/Lunatic0de
+#
 """ Userbot start point """
 
 import sys
-
 from importlib import import_module
+
 from pytgcalls import idle
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError
-from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.tl.functions.channels import InviteToChannelRequest, JoinChannelRequest
 
-from userbot import ALIVE_NAME, BOT_VER, BOTLOG_CHATID
+from userbot import ALIVE_NAME, BOT_TOKEN, BOT_USERNAME, BOT_VER, BOTLOG_CHATID
 from userbot import CMD_HANDLER as cmd
 from userbot import LOGS, UPSTREAM_REPO_BRANCH, bot, call_py
 from userbot.modules import ALL_MODULES
+from userbot.utils import autobot, checking
 
 INVALID_PH = (
     "\nERROR: Nomor Telepon yang kamu masukkan SALAH."
@@ -26,14 +32,17 @@ try:
     bot.start()
     call_py.start()
 except PhoneNumberInvalidError:
-    print(INVALID_PH)
+    LOGS.info(INVALID_PH)
+    sys.exit(1)
+except Exception as e:
+    LOGS.info(str(e), exc_info=True)
     sys.exit(1)
 
 for module_name in ALL_MODULES:
     imported_module = import_module("userbot.modules." + module_name)
 
 LOGS.info(
-    f"Jika {ALIVE_NAME} Membutuhkan Bantuan, Silahkan Gabung ke Grup https://t.me/SharingUserbot"
+    f"Jika {ALIVE_NAME} Membutuhkan Bantuan, Silahkan Tanyakan di Grup https://t.me/SharingUserbot"
 )
 
 LOGS.info(f"Man-Userbot ⚙️ V{BOT_VER} [🔥 BERHASIL DIAKTIFKAN! 🔥]")
@@ -48,18 +57,20 @@ async def man_userbot_on():
             )
     except Exception as e:
         LOGS.info(str(e))
-# KALO LU NGEFORK LINK CH & GRUP PUNYA GUA NYA JANGAN DI HAPUS YA GOBLOK 😡
     try:
         await bot(JoinChannelRequest("@Lunatic0de"))
-        await bot(JoinChannelRequest("@SharingUserbot"))
+    except BaseException:
+        pass
+    try:
+        await bot(InviteToChannelRequest(int(BOTLOG_CHATID), [BOT_USERNAME]))
     except BaseException:
         pass
 
 
-# JANGAN DI HAPUS GOBLOK 😡 LU COPY/EDIT AJA TINGGAL TAMBAHIN PUNYA LU
-# DI HAPUS GUA GBAN YA 🥴 GUA TANDAIN LU AKUN TELENYA 😡
-bot.loop.create_task(man_userbot_on())
-
+bot.loop.run_until_complete(checking())
+bot.loop.run_until_complete(man_userbot_on())
+if not BOT_TOKEN:
+    bot.loop.run_until_complete(autobot())
 idle()
 if len(sys.argv) not in (1, 3, 4):
     bot.disconnect()

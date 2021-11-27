@@ -26,9 +26,11 @@ import os
 import os.path
 import re
 import shlex
+import time
 from os.path import basename
 from typing import Optional, Union
 
+from emoji import get_emoji_regexp
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from html_telegraph_poster import TelegraphPoster
@@ -39,9 +41,14 @@ from telethon.tl.types import (
     ChannelParticipantCreator,
     DocumentAttributeFilename,
 )
+from yt_dlp import YoutubeDL
+
 from userbot import LOGS, SUDO_USERS, bot
 from userbot.utils.format import md_to_text, paste_message
-from yt_dlp import YoutubeDL
+
+
+def deEmojify(inputString):
+    return get_emoji_regexp().sub("", inputString)
 
 
 async def md5(fname: str) -> str:
@@ -90,12 +97,41 @@ def time_formatter(seconds: int) -> str:
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
     tmp = (
-        ((str(days) + " day(s), ") if days else "")
-        + ((str(hours) + " hour(s), ") if hours else "")
-        + ((str(minutes) + " minute(s), ") if minutes else "")
-        + ((str(seconds) + " second(s), ") if seconds else "")
+        ((str(days) + " hari, ") if days else "")
+        + ((str(hours) + " jam, ") if hours else "")
+        + ((str(minutes) + " menit, ") if minutes else "")
+        + ((str(seconds) + " detik, ") if seconds else "")
     )
     return tmp[:-2]
+
+
+async def extract_time(man, time_val):
+    if any(time_val.endswith(unit) for unit in ("s", "m", "h", "d", "w")):
+        unit = time_val[-1]
+        time_num = time_val[:-1]
+        if not time_num.isdigit():
+            await man.edit("Jumlah waktu yang ditentukan tidak valid.")
+            return None
+        if unit == "s":
+            bantime = int(time.time() + int(time_num) * 1)
+        elif unit == "m":
+            bantime = int(time.time() + int(time_num) * 60)
+        elif unit == "h":
+            bantime = int(time.time() + int(time_num) * 60 * 60)
+        elif unit == "d":
+            bantime = int(time.time() + int(time_num) * 24 * 60 * 60)
+        elif unit == "w":
+            bantime = int(time.time() + int(time_num) * 7 * 24 * 60 * 60)
+        else:
+            await man.edit(
+                f"**Jenis waktu yang dimasukan tidak valid. Harap masukan** s, m , h , d atau w tapi punya: `{time_val[-1]}`"
+            )
+            return None
+        return bantime
+    await man.edit(
+        f"**Jenis waktu yang dimasukan tidak valid. Harap Masukan** s, m , h , d atau w tapi punya: `{time_val[-1]}`"
+    )
+    return None
 
 
 def human_to_bytes(size: str) -> int:
@@ -148,8 +184,7 @@ async def take_screen_shot(
         duration,
     )
     ttl = duration // 2
-    thumb_image_path = path or os.path.join(
-        "./temp/", f"{basename(video_file)}.jpg")
+    thumb_image_path = path or os.path.join("./temp/", f"{basename(video_file)}.jpg")
     command = f"ffmpeg -ss {ttl} -i '{video_file}' -vframes 1 '{thumb_image_path}'"
     err = (await runcmd(command))[1]
     if err:
@@ -195,9 +230,9 @@ async def edit_or_reply(
     if not noformat:
         text = md_to_text(text)
     if aslink or deflink:
-        linktext = linktext or "Pesan Terlalu Besar Jadi Paste ke Bin"
+        linktext = linktext or "**Pesan Terlalu Panjang**"
         response = await paste_message(text, pastetype="s")
-        text = linktext + f" [Disini]({response})"
+        text = linktext + f" [Lihat Disini]({response})"
         if event.sender_id in SUDO_USERS:
             if reply_to:
                 return await reply_to.reply(text, link_preview=link_preview)
@@ -260,6 +295,21 @@ async def run_cmd(cmd: list) -> tuple[bytes, bytes]:
     return t_resp, e_resp
 
 
+# https://github.com/TeamUltroid/pyUltroid/blob/31c271cf4d35ab700e5880e952e54c82046812c2/pyUltroid/functions/helper.py#L154
+
+
+async def bash(cmd):
+    process = await asyncio.create_subprocess_shell(
+        cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await process.communicate()
+    err = stderr.decode().strip()
+    out = stdout.decode().strip()
+    return out, err
+
+
 def post_to_telegraph(title, html_format_content):
     post_client = TelegraphPoster(use_api=True)
     auth_name = "Man-Userbot"
@@ -277,7 +327,7 @@ def post_to_telegraph(title, html_format_content):
 async def edit_delete(event, text, time=None, parse_mode=None, link_preview=None):
     parse_mode = parse_mode or "md"
     link_preview = link_preview or False
-    time = time or 5
+    time = time or 15
     if event.sender_id in SUDO_USERS:
         reply_to = await event.get_reply_message()
         newevent = (
