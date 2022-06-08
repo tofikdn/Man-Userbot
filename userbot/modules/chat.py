@@ -30,7 +30,6 @@ from telethon.tl.functions.channels import (
 )
 from telethon.tl.functions.messages import GetFullChatRequest, GetHistoryRequest
 from telethon.tl.types import (
-    ChannelParticipantAdmin,
     ChannelParticipantsAdmins,
     ChannelParticipantsBots,
     InputPeerUser,
@@ -98,14 +97,9 @@ async def _(event):
             return None
     try:
         async for x in bot.iter_participants(chat, filter=ChannelParticipantsBots):
-            if isinstance(x.participant, ChannelParticipantAdmin):
-                mentions += "\n ⚜️ [{}](tg://user?id={}) `{}`".format(
-                    x.first_name, x.id, x.id
-                )
-            else:
-                mentions += "\n ⚜️ [{}](tg://user?id={}) `{}`".format(
-                    x.first_name, x.id, x.id
-                )
+            mentions += "\n ⚜️ [{}](tg://user?id={}) `{}`".format(
+                x.first_name, x.id, x.id
+            )
     except Exception as e:
         mentions += " " + str(e) + "\n"
     await event.edit(mentions)
